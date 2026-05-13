@@ -6,7 +6,7 @@ import heroImg from "@/assets/hero-1.jpg";
 
 export const Route = createFileRoute("/auth")({
   component: Auth,
-  head: () => ({ meta: [{ title: "Sign in — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Sign in - #Label" }] }),
 });
 
 function Auth() {
@@ -32,7 +32,7 @@ function Auth() {
             ))}
           </div>
 
-          <h1 className="display-lg">{mode === "signin" ? "Welcome back." : "Join Maison X."}</h1>
+          <h1 className="display-lg">{mode === "signin" ? "Welcome back." : "Join #Label."}</h1>
           <p className="mt-3 text-muted-foreground">{mode === "signin" ? "Continue to your atelier." : "Discover designers worth following."}</p>
 
           <form className="mt-8 space-y-5">

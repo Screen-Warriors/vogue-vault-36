@@ -5,7 +5,7 @@ import { products } from "@/lib/data";
 
 export const Route = createFileRoute("/orders/$id")({
   component: OrderTracking,
-  head: () => ({ meta: [{ title: "Order tracking — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Order tracking - #Label" }] }),
 });
 
 function OrderTracking() {

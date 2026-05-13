@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Search, Heart, ShoppingBag, User, Menu, X } from "lucide-react";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
@@ -25,26 +25,28 @@ export function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-          scrolled ? "glass-strong border-b border-border/40" : ""
+          scrolled
+            ? "glass-strong border-b border-border/40 shadow-card"
+            : "bg-onyx/55 backdrop-blur-md border-b border-foreground/10"
         }`}
       >
         <nav className="container-luxe flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group" aria-label="#Label home">
             <span className="font-display text-xl md:text-2xl tracking-tight">
-              MAISON<span className="gradient-text">.X</span>
+              <span className="gradient-text">#</span>Label
             </span>
           </Link>
 
           <ul className="hidden lg:flex items-center gap-10">
-            {links.map((l) => (
-              <li key={l.to}>
+            {links.map((link) => (
+              <li key={link.to}>
                 <Link
-                  to={l.to}
+                  to={link.to}
                   className="text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-foreground transition-colors luxe-link"
                   activeProps={{ className: "text-foreground" }}
-                  activeOptions={{ exact: l.to === "/" }}
+                  activeOptions={{ exact: link.to === "/" }}
                 >
-                  {l.label}
+                  {link.label}
                 </Link>
               </li>
             ))}
@@ -70,7 +72,6 @@ export function Navbar() {
           </div>
         </nav>
 
-        {/* Mobile menu */}
         <motion.div
           initial={false}
           animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
@@ -78,10 +79,10 @@ export function Navbar() {
           className="lg:hidden overflow-hidden glass-strong"
         >
           <ul className="container-luxe py-6 space-y-4">
-            {links.map((l) => (
-              <li key={l.to}>
-                <Link onClick={() => setOpen(false)} to={l.to} className="block py-2 font-display text-2xl">
-                  {l.label}
+            {links.map((link) => (
+              <li key={link.to}>
+                <Link onClick={() => setOpen(false)} to={link.to} className="block py-2 font-display text-2xl">
+                  {link.label}
                 </Link>
               </li>
             ))}
@@ -89,31 +90,39 @@ export function Navbar() {
         </motion.div>
       </motion.header>
 
-      {/* Search overlay */}
       {searchOpen && (
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] glass-strong flex items-start pt-32 justify-center"
           onClick={() => setSearchOpen(false)}
         >
           <motion.div
-            initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="container-luxe w-full" onClick={(e) => e.stopPropagation()}
+            className="container-luxe w-full"
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center gap-4 border-b border-border/60 pb-4">
               <Search className="w-5 h-5 text-muted-foreground" />
               <input
                 autoFocus
-                placeholder="Search designers, collections, pieces…"
+                placeholder="Search designers, collections, apparel..."
                 className="flex-1 bg-transparent outline-none text-2xl md:text-4xl font-display placeholder:text-muted-foreground/50"
               />
-              <button onClick={() => setSearchOpen(false)} className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground">Close</button>
+              <button onClick={() => setSearchOpen(false)} className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground">
+                Close
+              </button>
             </div>
             <div className="mt-8 flex flex-wrap gap-2">
-              {["Avant-garde", "Tailoring FW26", "Aria Volkov", "Liquid Silver", "Boots", "Couture"].map((s) => (
-                <span key={s} className="text-xs uppercase tracking-[0.2em] px-4 py-2 hairline rounded-full text-muted-foreground hover:text-foreground hover:border-foreground/40 cursor-pointer transition-all">
-                  {s}
+              {["Oversized tees", "Indo-western", "Festive edit", "Campus fits", "Modern kurta", "Indian luxury"].map((suggestion) => (
+                <span
+                  key={suggestion}
+                  className="text-xs uppercase tracking-[0.2em] px-4 py-2 hairline rounded-full text-muted-foreground hover:text-foreground hover:border-foreground/40 cursor-pointer transition-all"
+                >
+                  {suggestion}
                 </span>
               ))}
             </div>

@@ -5,7 +5,7 @@ import { products } from "@/lib/data";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
-  head: () => ({ meta: [{ title: "Studio — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Studio - #Label" }] }),
 });
 
 function Dashboard() {
@@ -20,7 +20,7 @@ function Dashboard() {
     <div className="pt-28 pb-20 container-luxe">
       <div className="flex items-end justify-between flex-wrap gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <p className="eyebrow mb-2">Studio · Aria Volkov</p>
+          <p className="eyebrow mb-2">#Label Studio / Aria Volkov</p>
           <h1 className="display-lg">Your atelier.</h1>
         </motion.div>
         <button className="inline-flex items-center gap-3 bg-foreground text-background px-6 py-3 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors">

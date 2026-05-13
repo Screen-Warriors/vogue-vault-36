@@ -6,7 +6,7 @@ import { products } from "@/lib/data";
 
 export const Route = createFileRoute("/checkout")({
   component: Checkout,
-  head: () => ({ meta: [{ title: "Checkout — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Checkout - #Label" }] }),
 });
 
 function Checkout() {

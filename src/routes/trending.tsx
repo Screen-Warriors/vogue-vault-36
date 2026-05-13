@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/trending")({
   component: Trending,
-  head: () => ({ meta: [{ title: "Trending — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Trending - #Label" }] }),
 });
 
 function Trending() {

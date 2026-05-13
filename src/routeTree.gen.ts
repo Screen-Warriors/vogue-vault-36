@@ -21,6 +21,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIdRouteImport } from './routes/products.$id'
 import { Route as OrdersIdRouteImport } from './routes/orders.$id'
 import { Route as DesignersIdRouteImport } from './routes/designers.$id'
+import { Route as DesignerSlugStoryRouteImport } from './routes/designer.$slug.story'
+import { Route as DesignerSlugCollectionsRouteImport } from './routes/designer.$slug.collections'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -82,6 +84,16 @@ const DesignersIdRoute = DesignersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => DesignersRoute,
 } as any)
+const DesignerSlugStoryRoute = DesignerSlugStoryRouteImport.update({
+  id: '/designer/$slug/story',
+  path: '/designer/$slug/story',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignerSlugCollectionsRoute = DesignerSlugCollectionsRouteImport.update({
+  id: '/designer/$slug/collections',
+  path: '/designer/$slug/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/designers/$id': typeof DesignersIdRoute
   '/orders/$id': typeof OrdersIdRoute
   '/products/$id': typeof ProductsIdRoute
+  '/designer/$slug/collections': typeof DesignerSlugCollectionsRoute
+  '/designer/$slug/story': typeof DesignerSlugStoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +124,8 @@ export interface FileRoutesByTo {
   '/designers/$id': typeof DesignersIdRoute
   '/orders/$id': typeof OrdersIdRoute
   '/products/$id': typeof ProductsIdRoute
+  '/designer/$slug/collections': typeof DesignerSlugCollectionsRoute
+  '/designer/$slug/story': typeof DesignerSlugStoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/designers/$id': typeof DesignersIdRoute
   '/orders/$id': typeof OrdersIdRoute
   '/products/$id': typeof ProductsIdRoute
+  '/designer/$slug/collections': typeof DesignerSlugCollectionsRoute
+  '/designer/$slug/story': typeof DesignerSlugStoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +159,8 @@ export interface FileRouteTypes {
     | '/designers/$id'
     | '/orders/$id'
     | '/products/$id'
+    | '/designer/$slug/collections'
+    | '/designer/$slug/story'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
     | '/designers/$id'
     | '/orders/$id'
     | '/products/$id'
+    | '/designer/$slug/collections'
+    | '/designer/$slug/story'
   id:
     | '__root__'
     | '/'
@@ -169,6 +191,8 @@ export interface FileRouteTypes {
     | '/designers/$id'
     | '/orders/$id'
     | '/products/$id'
+    | '/designer/$slug/collections'
+    | '/designer/$slug/story'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,6 +207,8 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   OrdersIdRoute: typeof OrdersIdRoute
   ProductsIdRoute: typeof ProductsIdRoute
+  DesignerSlugCollectionsRoute: typeof DesignerSlugCollectionsRoute
+  DesignerSlugStoryRoute: typeof DesignerSlugStoryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -271,6 +297,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DesignersIdRouteImport
       parentRoute: typeof DesignersRoute
     }
+    '/designer/$slug/story': {
+      id: '/designer/$slug/story'
+      path: '/designer/$slug/story'
+      fullPath: '/designer/$slug/story'
+      preLoaderRoute: typeof DesignerSlugStoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designer/$slug/collections': {
+      id: '/designer/$slug/collections'
+      path: '/designer/$slug/collections'
+      fullPath: '/designer/$slug/collections'
+      preLoaderRoute: typeof DesignerSlugCollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -298,7 +338,19 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   OrdersIdRoute: OrdersIdRoute,
   ProductsIdRoute: ProductsIdRoute,
+  DesignerSlugCollectionsRoute: DesignerSlugCollectionsRoute,
+  DesignerSlugStoryRoute: DesignerSlugStoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

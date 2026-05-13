@@ -7,19 +7,19 @@ import { DesignerCard } from "@/components/DesignerCard";
 
 export const Route = createFileRoute("/designers")({
   component: DesignersPage,
-  head: () => ({ meta: [{ title: "Designers — Maison X" }, { name: "description", content: "Discover independent fashion designers from around the world." }] }),
+  head: () => ({ meta: [{ title: "Designers - #Label" }, { name: "description", content: "Discover independent Indian apparel designers shaping modern fashion culture." }] }),
 });
 
 function DesignersPage() {
   const [region, setRegion] = useState("All");
-  const regions = ["All", "Europe", "Asia", "Americas", "Africa"];
+  const regions = ["All", "Mumbai", "Delhi", "Jaipur", "Bangalore"];
   return (
     <div className="pt-32 pb-20">
       <div className="container-luxe">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <p className="eyebrow mb-4">The Marketplace</p>
-          <h1 className="display-xl max-w-4xl">Independent <em className="gradient-text not-italic">houses</em>, no algorithm.</h1>
-          <p className="mt-6 max-w-xl text-muted-foreground text-lg">320 verified designers. Hand-picked. Updated weekly.</p>
+          <p className="eyebrow mb-4">The Indian Marketplace</p>
+          <h1 className="display-xl max-w-4xl">Independent Indian <em className="gradient-text not-italic">labels</em>, no algorithm.</h1>
+          <p className="mt-6 max-w-xl text-muted-foreground text-lg">320 verified Indian designers. Hand-picked. Updated weekly.</p>
         </motion.div>
 
         <div className="mt-14 flex flex-wrap items-center gap-3 justify-between">

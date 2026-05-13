@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/cart")({
   component: CartPage,
-  head: () => ({ meta: [{ title: "Bag — Maison X" }] }),
+  head: () => ({ meta: [{ title: "Cart - #Label" }] }),
 });
 
 function CartPage() {
@@ -19,8 +19,8 @@ function CartPage() {
   return (
     <div className="pt-32 pb-20 container-luxe">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-        <p className="eyebrow mb-3">Your bag</p>
-        <h1 className="display-lg">{items.length} pieces · curated by you</h1>
+        <p className="eyebrow mb-3">Your cart</p>
+        <h1 className="display-lg">{items.length} pieces / curated by you</h1>
       </motion.div>
 
       <div className="mt-12 grid lg:grid-cols-3 gap-10">
@@ -40,7 +40,7 @@ function CartPage() {
                   <div className="min-w-0">
                     <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{item.designer}</p>
                     <h3 className="font-display text-lg md:text-xl mt-1 truncate">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Size {item.size} · Onyx</p>
+                    <p className="text-xs text-muted-foreground mt-1">Size {item.size} / Onyx</p>
                   </div>
                   <button onClick={() => setItems(items.filter((x) => x.id !== item.id))} className="p-1 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
                 </div>
@@ -75,7 +75,7 @@ function CartPage() {
           <Link to="/checkout" className="w-full bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-center gap-3">
             Checkout <ArrowRight className="w-4 h-4" />
           </Link>
-          <p className="text-xs text-muted-foreground text-center">Secure checkout · Free returns within 30 days</p>
+          <p className="text-xs text-muted-foreground text-center">Secure checkout / Free returns within 30 days</p>
         </aside>
       </div>
 

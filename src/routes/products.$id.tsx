@@ -14,7 +14,7 @@ export const Route = createFileRoute("/products/$id")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.product.name ?? "Product"} — Maison X` },
+      { title: `${loaderData?.product.name ?? "Product"} - #Label` },
       { name: "description", content: `${loaderData?.product.name} by ${loaderData?.product.designer}` },
       { property: "og:image", content: loaderData?.product.image },
     ],
@@ -111,7 +111,7 @@ function ProductPage() {
                 <span className="w-10 text-center tabular-nums">{qty}</span>
                 <button onClick={() => setQty(qty + 1)} className="p-3 hover:text-accent"><Plus className="w-3.5 h-3.5" /></button>
               </div>
-              <button className="flex-1 bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors">Add to bag</button>
+              <button className="flex-1 bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors">Add to cart</button>
               <button className="p-4 hairline rounded-full hover:bg-secondary"><Heart className="w-4 h-4" /></button>
               <button className="p-4 hairline rounded-full hover:bg-secondary"><Share2 className="w-4 h-4" /></button>
             </div>
