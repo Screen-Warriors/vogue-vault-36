@@ -9,38 +9,240 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as TrendingRouteImport } from './routes/trending'
+import { Route as DesignersRouteImport } from './routes/designers'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProductsIdRouteImport } from './routes/products.$id'
+import { Route as OrdersIdRouteImport } from './routes/orders.$id'
+import { Route as DesignersIdRouteImport } from './routes/designers.$id'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrendingRoute = TrendingRouteImport.update({
+  id: '/trending',
+  path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignersRoute = DesignersRouteImport.update({
+  id: '/designers',
+  path: '/designers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsRoute = CollectionsRouteImport.update({
+  id: '/collections',
+  path: '/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductsIdRoute = ProductsIdRouteImport.update({
+  id: '/products/$id',
+  path: '/products/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIdRoute = OrdersIdRouteImport.update({
+  id: '/orders/$id',
+  path: '/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignersIdRoute = DesignersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DesignersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/collections': typeof CollectionsRoute
+  '/dashboard': typeof DashboardRoute
+  '/designers': typeof DesignersRouteWithChildren
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/designers/$id': typeof DesignersIdRoute
+  '/orders/$id': typeof OrdersIdRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/collections': typeof CollectionsRoute
+  '/dashboard': typeof DashboardRoute
+  '/designers': typeof DesignersRouteWithChildren
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/designers/$id': typeof DesignersIdRoute
+  '/orders/$id': typeof OrdersIdRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/collections': typeof CollectionsRoute
+  '/dashboard': typeof DashboardRoute
+  '/designers': typeof DesignersRouteWithChildren
+  '/trending': typeof TrendingRoute
+  '/wishlist': typeof WishlistRoute
+  '/designers/$id': typeof DesignersIdRoute
+  '/orders/$id': typeof OrdersIdRoute
+  '/products/$id': typeof ProductsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/cart'
+    | '/checkout'
+    | '/collections'
+    | '/dashboard'
+    | '/designers'
+    | '/trending'
+    | '/wishlist'
+    | '/designers/$id'
+    | '/orders/$id'
+    | '/products/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/cart'
+    | '/checkout'
+    | '/collections'
+    | '/dashboard'
+    | '/designers'
+    | '/trending'
+    | '/wishlist'
+    | '/designers/$id'
+    | '/orders/$id'
+    | '/products/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/cart'
+    | '/checkout'
+    | '/collections'
+    | '/dashboard'
+    | '/designers'
+    | '/trending'
+    | '/wishlist'
+    | '/designers/$id'
+    | '/orders/$id'
+    | '/products/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  CartRoute: typeof CartRoute
+  CheckoutRoute: typeof CheckoutRoute
+  CollectionsRoute: typeof CollectionsRoute
+  DashboardRoute: typeof DashboardRoute
+  DesignersRoute: typeof DesignersRouteWithChildren
+  TrendingRoute: typeof TrendingRoute
+  WishlistRoute: typeof WishlistRoute
+  OrdersIdRoute: typeof OrdersIdRoute
+  ProductsIdRoute: typeof ProductsIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trending': {
+      id: '/trending'
+      path: '/trending'
+      fullPath: '/trending'
+      preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designers': {
+      id: '/designers'
+      path: '/designers'
+      fullPath: '/designers'
+      preLoaderRoute: typeof DesignersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections': {
+      id: '/collections'
+      path: '/collections'
+      fullPath: '/collections'
+      preLoaderRoute: typeof CollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +250,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/$id': {
+      id: '/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof ProductsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/$id': {
+      id: '/orders/$id'
+      path: '/orders/$id'
+      fullPath: '/orders/$id'
+      preLoaderRoute: typeof OrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designers/$id': {
+      id: '/designers/$id'
+      path: '/$id'
+      fullPath: '/designers/$id'
+      preLoaderRoute: typeof DesignersIdRouteImport
+      parentRoute: typeof DesignersRoute
+    }
   }
 }
 
+interface DesignersRouteChildren {
+  DesignersIdRoute: typeof DesignersIdRoute
+}
+
+const DesignersRouteChildren: DesignersRouteChildren = {
+  DesignersIdRoute: DesignersIdRoute,
+}
+
+const DesignersRouteWithChildren = DesignersRoute._addFileChildren(
+  DesignersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  CartRoute: CartRoute,
+  CheckoutRoute: CheckoutRoute,
+  CollectionsRoute: CollectionsRoute,
+  DashboardRoute: DashboardRoute,
+  DesignersRoute: DesignersRouteWithChildren,
+  TrendingRoute: TrendingRoute,
+  WishlistRoute: WishlistRoute,
+  OrdersIdRoute: OrdersIdRoute,
+  ProductsIdRoute: ProductsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -9,6 +9,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { MobileTabBar } from "@/components/MobileTabBar";
 
 function NotFoundComponent() {
   return (
@@ -72,11 +75,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Maison X — Luxury Fashion Marketplace for Independent Designers" },
+      { name: "description", content: "Discover and collect original pieces from emerging fashion designers. Cinematic, curated, limited." },
+      { name: "author", content: "Maison X" },
+      { property: "og:title", content: "Maison X — Luxury Fashion Marketplace" },
+      { property: "og:description", content: "A platform for independent designers and the people who collect them." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -113,7 +116,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 pb-20 md:pb-0">
+          <Outlet />
+        </main>
+        <Footer />
+        <MobileTabBar />
+      </div>
     </QueryClientProvider>
   );
 }
