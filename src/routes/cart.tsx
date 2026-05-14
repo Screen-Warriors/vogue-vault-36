@@ -4,6 +4,7 @@ import { Minus, Plus, X, ArrowRight, Tag } from "lucide-react";
 import { useState } from "react";
 import { products } from "@/lib/data";
 import { ProductCard } from "@/components/ProductCard";
+import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/cart")({
   component: CartPage,
@@ -50,7 +51,7 @@ function CartPage() {
                     <span className="w-8 text-center text-sm tabular-nums">{item.qty}</span>
                     <button onClick={() => setItems(items.map((x) => x.id === item.id ? { ...x, qty: x.qty + 1 } : x))} className="p-2 hover:text-accent"><Plus className="w-3 h-3" /></button>
                   </div>
-                  <p className="font-display text-lg tabular-nums">${(item.price * item.qty).toLocaleString()}</p>
+                  <p className="font-display text-lg tabular-nums">{formatCurrency(item.price * item.qty)}</p>
                 </div>
               </div>
             </motion.div>
@@ -65,12 +66,12 @@ function CartPage() {
             <button className="px-4 py-2 text-xs uppercase tracking-[0.24em] bg-foreground text-background rounded-full">Apply</button>
           </div>
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="tabular-nums">${subtotal.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="tabular-nums">{formatCurrency(subtotal)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span className="text-accent">Complimentary</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span className="text-muted-foreground">at checkout</span></div>
           </div>
           <div className="border-t border-border pt-4 flex justify-between font-display text-2xl">
-            <span>Total</span><span className="tabular-nums">${total.toLocaleString()}</span>
+            <span>Total</span><span className="tabular-nums">{formatCurrency(total)}</span>
           </div>
           <Link to="/checkout" className="w-full bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-center gap-3">
             Checkout <ArrowRight className="w-4 h-4" />

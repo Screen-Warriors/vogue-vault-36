@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { TrendingUp, DollarSign, Package, Eye, Plus, ArrowUpRight } from "lucide-react";
+import { TrendingUp, IndianRupee, Package, Eye, Plus, ArrowUpRight } from "lucide-react";
 import { products } from "@/lib/data";
+import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const stats = [
-    { label: "Revenue (30d)", value: "$48,920", change: "+24.6%", icon: DollarSign },
+    { label: "Revenue (30d)", value: formatCurrency(48920), change: "+24.6%", icon: IndianRupee },
     { label: "Orders", value: "127", change: "+12", icon: Package },
     { label: "Profile views", value: "12.4K", change: "+38%", icon: Eye },
     { label: "Conversion", value: "4.8%", change: "+0.6", icon: TrendingUp },
@@ -89,7 +90,7 @@ function Dashboard() {
                 <tr key={p.id} className="border-t border-border">
                   <td className="py-4 flex gap-3 items-center"><img src={p.image} alt="" className="w-10 h-12 object-cover rounded-sm" /><span>{p.name}</span></td>
                   <td>{40 - i * 5}</td>
-                  <td className="tabular-nums">${p.price.toLocaleString()}</td>
+                  <td className="tabular-nums">{formatCurrency(p.price)}</td>
                   <td className="tabular-nums">{42 - i * 6}</td>
                   <td><span className="text-accent text-xs uppercase tracking-[0.2em]">Live</span></td>
                 </tr>
@@ -113,7 +114,7 @@ function Chart() {
           initial={{ height: 0 }} animate={{ height: `${(v / max) * 100}%` }}
           transition={{ duration: 0.7, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
           className="flex-1 bg-gradient-to-t from-accent/30 to-accent rounded-t-sm hover:opacity-80 transition-opacity"
-          title={`Day ${i + 1}: $${v * 100}`}
+          title={`Day ${i + 1}: ${formatCurrency(v * 100)}`}
         />
       ))}
     </div>

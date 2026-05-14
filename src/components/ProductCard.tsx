@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import type { Product } from "@/lib/data";
+import { formatCurrency } from "@/lib/utils";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   return (
@@ -46,7 +47,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground truncate">{product.designer}</p>
             <h3 className="mt-1 text-sm font-medium text-foreground truncate">{product.name}</h3>
           </div>
-          <p className="text-sm tabular-nums shrink-0">${product.price.toLocaleString()}</p>
+          <p className="text-sm tabular-nums shrink-0">{formatCurrency(product.price)}</p>
         </div>
       </Link>
     </motion.div>

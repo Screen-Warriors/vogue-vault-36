@@ -143,7 +143,7 @@ function Spotlight() {
           viewport={{ once: true }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="lg:col-span-7 relative aspect-[4/5] lg:aspect-auto overflow-hidden rounded-sm"
         >
-          <img src={collection1} alt="Spotlight" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={collection1} alt="Spotlight" loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
           <div className="absolute inset-0 bg-gradient-to-r from-onyx/80 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 p-8 md:p-12">
             <p className="eyebrow text-accent">Designer Spotlight</p>

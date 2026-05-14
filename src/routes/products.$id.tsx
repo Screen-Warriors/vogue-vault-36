@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Heart, Share2, Truck, ShieldCheck, RotateCcw, Minus, Plus } from "lucide-react";
 import { products } from "@/lib/data";
 import { ProductCard } from "@/components/ProductCard";
+import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/products/$id")({
   component: ProductPage,
@@ -77,7 +78,7 @@ function ProductPage() {
             <p className="eyebrow text-accent">Limited Edition · 24/100</p>
             <h1 className="display-lg mt-3">{product.name}</h1>
             <Link to="/designers/$id" params={{ id: product.designerId }} className="mt-2 inline-block text-sm text-muted-foreground luxe-link">by {product.designer}</Link>
-            <p className="mt-6 text-3xl font-display tabular-nums">${product.price.toLocaleString()}</p>
+            <p className="mt-6 text-3xl font-display tabular-nums">{formatCurrency(product.price)}</p>
 
             <div className="mt-8 glass rounded-sm p-5">
               <p className="eyebrow mb-3">Drop ends in</p>

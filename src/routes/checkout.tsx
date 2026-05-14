@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Check, CreditCard, Lock, Truck } from "lucide-react";
 import { products } from "@/lib/data";
+import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/checkout")({
   component: Checkout,
@@ -61,7 +62,7 @@ function Checkout() {
                 <div key={i.id} className="flex gap-4 items-center border-b border-border pb-4">
                   <img src={i.image} alt="" className="w-16 h-20 object-cover rounded-sm" />
                   <div className="flex-1"><p className="font-medium">{i.name}</p><p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1">{i.designer}</p></div>
-                  <p className="tabular-nums">${i.price.toLocaleString()}</p>
+                  <p className="tabular-nums">{formatCurrency(i.price)}</p>
                 </div>
               ))}
             </div>
@@ -80,11 +81,11 @@ function Checkout() {
           {items.map((i) => (
             <div key={i.id} className="flex justify-between text-sm">
               <span className="text-muted-foreground truncate pr-3">{i.name}</span>
-              <span className="tabular-nums shrink-0">${i.price.toLocaleString()}</span>
+              <span className="tabular-nums shrink-0">{formatCurrency(i.price)}</span>
             </div>
           ))}
           <div className="border-t border-border pt-4 flex justify-between font-display text-2xl">
-            <span>Total</span><span className="tabular-nums">${total.toLocaleString()}</span>
+            <span>Total</span><span className="tabular-nums">{formatCurrency(total)}</span>
           </div>
         </aside>
       </div>
