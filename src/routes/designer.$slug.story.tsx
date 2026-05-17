@@ -31,7 +31,7 @@ function DesignerStoryPage() {
           initial={{ scale: 1.08 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-onyx via-onyx/55 to-onyx/30" />
         <div className="absolute inset-0 grain" />

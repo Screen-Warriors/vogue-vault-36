@@ -27,10 +27,13 @@ export function Navbar() {
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
           scrolled
             ? "glass-strong border-b border-border/40 shadow-card"
-            : "bg-onyx/55 backdrop-blur-md border-b border-foreground/10"
+            : "bg-onyx/70 backdrop-blur-xl border-b border-foreground/10"
         }`}
       >
-        <nav className="container-luxe flex items-center justify-between h-16 md:h-20">
+        <nav
+          aria-label="Primary navigation"
+          className="container-luxe flex items-center justify-between h-16 md:h-20"
+        >
           <Link to="/" className="flex items-center gap-2 group" aria-label="#Label home">
             <span className="font-display text-xl md:text-2xl tracking-tight">
               <span className="gradient-text">#</span>Label
@@ -53,17 +56,33 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-1 md:gap-2">
-            <button onClick={() => setSearchOpen(true)} className="p-2.5 hover:bg-secondary rounded-full transition-colors" aria-label="Search">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2.5 hover:bg-secondary rounded-full transition-colors"
+              aria-label="Search"
+            >
               <Search className="w-[18px] h-[18px]" strokeWidth={1.5} />
             </button>
-            <Link to="/wishlist" className="p-2.5 hover:bg-secondary rounded-full transition-colors hidden md:inline-flex" aria-label="Wishlist">
+            <Link
+              to="/wishlist"
+              className="p-2.5 hover:bg-secondary rounded-full transition-colors hidden md:inline-flex"
+              aria-label="Wishlist"
+            >
               <Heart className="w-[18px] h-[18px]" strokeWidth={1.5} />
             </Link>
-            <Link to="/cart" className="relative p-2.5 hover:bg-secondary rounded-full transition-colors" aria-label="Cart">
+            <Link
+              to="/cart"
+              className="relative p-2.5 hover:bg-secondary rounded-full transition-colors"
+              aria-label="Cart"
+            >
               <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.5} />
               <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent" />
             </Link>
-            <Link to="/auth" className="p-2.5 hover:bg-secondary rounded-full transition-colors hidden md:inline-flex" aria-label="Account">
+            <Link
+              to="/auth"
+              className="p-2.5 hover:bg-secondary rounded-full transition-colors hidden md:inline-flex"
+              aria-label="Account"
+            >
               <User className="w-[18px] h-[18px]" strokeWidth={1.5} />
             </Link>
             <button onClick={() => setOpen(!open)} className="lg:hidden p-2.5" aria-label="Menu">
@@ -81,7 +100,11 @@ export function Navbar() {
           <ul className="container-luxe py-6 space-y-4">
             {links.map((link) => (
               <li key={link.to}>
-                <Link onClick={() => setOpen(false)} to={link.to} className="block py-2 font-display text-2xl">
+                <Link
+                  onClick={() => setOpen(false)}
+                  to={link.to}
+                  className="block py-2 font-display text-2xl"
+                >
                   {link.label}
                 </Link>
               </li>
@@ -89,6 +112,7 @@ export function Navbar() {
           </ul>
         </motion.div>
       </motion.header>
+      <div className="h-16 md:h-20" aria-hidden="true" />
 
       {searchOpen && (
         <motion.div
@@ -112,12 +136,22 @@ export function Navbar() {
                 placeholder="Search designers, collections, apparel..."
                 className="flex-1 bg-transparent outline-none text-2xl md:text-4xl font-display placeholder:text-muted-foreground/50"
               />
-              <button onClick={() => setSearchOpen(false)} className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setSearchOpen(false)}
+                className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
+              >
                 Close
               </button>
             </div>
             <div className="mt-8 flex flex-wrap gap-2">
-              {["Oversized tees", "Indo-western", "Festive edit", "Campus fits", "Modern kurta", "Indian luxury"].map((suggestion) => (
+              {[
+                "Oversized tees",
+                "Indo-western",
+                "Festive edit",
+                "Campus fits",
+                "Modern kurta",
+                "Indian luxury",
+              ].map((suggestion) => (
                 <span
                   key={suggestion}
                   className="text-xs uppercase tracking-[0.2em] px-4 py-2 hairline rounded-full text-muted-foreground hover:text-foreground hover:border-foreground/40 cursor-pointer transition-all"
