@@ -36,7 +36,7 @@ export function Navbar() {
         >
           <Link to="/" className="flex items-center gap-2 group" aria-label="#Label home">
             <span className="font-display text-xl md:text-2xl tracking-tight">
-              <span className="gradient-text">#</span>Label
+              <span className="gradient-text">#</span>Labelkkk
             </span>
           </Link>
 
