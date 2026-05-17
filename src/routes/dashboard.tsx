@@ -1,7 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useEffect, useState, type FormEvent } from "react";
-import { TrendingUp, IndianRupee, Package, Eye, Plus, ArrowUpRight, X } from "lucide-react";
+import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  TrendingUp,
+  IndianRupee,
+  Package,
+  Eye,
+  Plus,
+  ArrowUpRight,
+  X,
+  Shirt,
+  ShoppingBag,
+  Baby,
+  Users,
+  Sparkles,
+  CalendarDays,
+  CloudSun,
+  Gem,
+  Search,
+  ChevronDown,
+  ChevronRight,
+  Check,
+} from "lucide-react";
 import { products } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 
@@ -9,6 +29,370 @@ export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
   head: () => ({ meta: [{ title: "Studio - #Label" }] }),
 });
+
+const categoryGroups = [
+  {
+    name: "Men's Clothing",
+    icon: Shirt,
+    items: [
+      "T-Shirts",
+      "Shirts",
+      "Polo Shirts",
+      "Hoodies",
+      "Sweatshirts",
+      "Jackets",
+      "Blazers",
+      "Suits",
+      "Jeans",
+      "Trousers",
+      "Shorts",
+      "Track Pants",
+      "Kurta",
+      "Sherwani",
+      "Ethnic Sets",
+    ],
+  },
+  {
+    name: "Women's Clothing",
+    icon: ShoppingBag,
+    items: [
+      "Tops",
+      "T-Shirts",
+      "Shirts",
+      "Dresses",
+      "Gowns",
+      "Sarees",
+      "Kurtis",
+      "Lehengas",
+      "Co-Ord Sets",
+      "Jumpsuits",
+      "Skirts",
+      "Jeans",
+      "Trousers",
+      "Leggings",
+      "Jackets",
+      "Blazers",
+      "Hoodies",
+      "Nightwear",
+    ],
+  },
+  {
+    name: "Kids Clothing",
+    icon: Baby,
+    items: ["Boys Wear", "Girls Wear", "Baby Clothing", "School Wear", "Party Wear", "Ethnic Wear"],
+  },
+  {
+    name: "Unisex Clothing",
+    icon: Users,
+    items: ["Oversized T-Shirts", "Hoodies", "Streetwear", "Joggers", "Cargo Pants"],
+  },
+  {
+    name: "Style-Based Clothing",
+    icon: Sparkles,
+    items: [
+      "Casual Wear",
+      "Formal Wear",
+      "Streetwear",
+      "Vintage Fashion",
+      "Korean Fashion",
+      "Minimal Fashion",
+      "Luxury Fashion",
+      "Sustainable Fashion",
+      "Athleisure",
+      "Party Wear",
+    ],
+  },
+  {
+    name: "Occasion-Based Clothing",
+    icon: CalendarDays,
+    items: [
+      "Wedding Wear",
+      "Festive Wear",
+      "Office Wear",
+      "Gym Wear",
+      "Vacation Wear",
+      "Airport Looks",
+      "College Wear",
+    ],
+  },
+  {
+    name: "Seasonal Clothing",
+    icon: CloudSun,
+    items: ["Summer Collection", "Winter Collection", "Monsoon Wear", "Spring Collection"],
+  },
+  {
+    name: "Premium Sections",
+    icon: Gem,
+    items: [
+      "New Arrivals",
+      "Trending Now",
+      "Best Sellers",
+      "Limited Edition",
+      "Designer Collection",
+      "Celebrity Inspired",
+      "Handmade Collection",
+    ],
+  },
+];
+
+const popularCategories = [
+  "Style-Based Clothing / Streetwear",
+  "Style-Based Clothing / Luxury Fashion",
+  "Occasion-Based Clothing / Wedding Wear",
+  "Premium Sections / New Arrivals",
+  "Premium Sections / Designer Collection",
+];
+
+function CategorySelector({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState<string[]>([categoryGroups[0].name, categoryGroups[1].name]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const selectedCategories = value ? value.split(", ").filter(Boolean) : [];
+  const searchTerm = search.trim().toLowerCase();
+  const filteredGroups = categoryGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) =>
+          item.toLowerCase().includes(searchTerm) || group.name.toLowerCase().includes(searchTerm),
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+  const keyboardItems = filteredGroups.flatMap((group) =>
+    group.items.map((item) => `${group.name} / ${item}`),
+  );
+
+  const updateSelected = (nextSelected: string[]) => {
+    onChange(nextSelected.join(", "));
+  };
+
+  const toggleCategory = (item: string) => {
+    updateSelected(
+      selectedCategories.includes(item)
+        ? selectedCategories.filter((categoryItem) => categoryItem !== item)
+        : [...selectedCategories, item],
+    );
+  };
+
+  const toggleGroup = (groupName: string) => {
+    setExpanded((current) =>
+      current.includes(groupName)
+        ? current.filter((item) => item !== groupName)
+        : [...current, groupName],
+    );
+  };
+
+  const handleKeyboard = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!open || keyboardItems.length === 0) {
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((current) => Math.min(current + 1, keyboardItems.length - 1));
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((current) => Math.max(current - 1, 0));
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      toggleCategory(keyboardItems[activeIndex]);
+    }
+
+    if (event.key === "Escape") {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3" onKeyDown={handleKeyboard}>
+      <label className="block text-sm uppercase tracking-[0.24em] text-muted-foreground">
+        Category
+      </label>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          className="group flex w-full items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all hover:border-[#d1b773]/60 hover:shadow-[0_0_40px_rgba(209,183,115,0.12)] focus:border-[#d1b773] focus:outline-none"
+        >
+          <div className="min-w-0">
+            <p className="text-sm text-foreground">
+              {selectedCategories.length
+                ? `${selectedCategories.length} categories selected`
+                : "Select premium categories"}
+            </p>
+            <p className="mt-1 truncate text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              {selectedCategories.length ? selectedCategories.join(" / ") : "Search, expand, and tag your piece"}
+            </p>
+          </div>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#d1b773]/30 bg-[#d1b773]/10 text-[#d1b773] transition group-hover:bg-[#d1b773]/20">
+            <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          </span>
+        </button>
+
+        {selectedCategories.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {selectedCategories.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => toggleCategory(item)}
+                className="inline-flex items-center gap-2 rounded-full border border-[#d1b773]/30 bg-[#d1b773]/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#ead9a0] transition hover:border-[#d1b773] hover:bg-[#d1b773]/20"
+              >
+                {item}
+                <X className="h-3 w-3" />
+              </button>
+            ))}
+          </div>
+        )}
+
+        <motion.div
+          initial={false}
+          animate={open ? { opacity: 1, y: 8, height: "auto" } : { opacity: 0, y: -8, height: 0 }}
+          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          className="overflow-hidden"
+        >
+          <div className="relative z-20 mt-2 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#080808]/95 shadow-[0_28px_100px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
+            <div className="sticky top-0 z-10 border-b border-white/10 bg-[#080808]/95 p-4 backdrop-blur-xl">
+              <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 focus-within:border-[#d1b773]/70">
+                <Search className="h-4 w-4 text-[#d1b773]" />
+                <input
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setActiveIndex(0);
+                  }}
+                  aria-label="Search categories"
+                  placeholder="Search categories"
+                  className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+
+              <div className="mt-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                    Popular Categories
+                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#d1b773]">
+                    {selectedCategories.length} selected
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {popularCategories.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => toggleCategory(item)}
+                      className={`rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.2em] transition ${
+                        selectedCategories.includes(item)
+                          ? "bg-[#d1b773] text-black"
+                          : "border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-[#d1b773]/70 hover:text-[#ead9a0]"
+                      }`}
+                    >
+                      {item.split(" / ")[1]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div
+              role="listbox"
+              aria-multiselectable="true"
+              className="max-h-80 overflow-y-auto p-3 scroll-smooth [scrollbar-color:#d1b773_#101010] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#d1b773]/70 [&::-webkit-scrollbar-track]:bg-[#101010]"
+            >
+              {filteredGroups.map((group) => {
+                const Icon = group.icon;
+                const isExpanded = expanded.includes(group.name) || Boolean(searchTerm);
+
+                return (
+                  <div key={group.name} className="rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(group.name)}
+                      className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left transition hover:bg-white/[0.04]"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d1b773]/20 bg-[#d1b773]/10 text-[#d1b773]">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span>
+                          <span className="block text-sm font-medium text-foreground">{group.name}</span>
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                            {group.items.length} options
+                          </span>
+                        </span>
+                      </span>
+                      <ChevronRight
+                        className={`h-4 w-4 text-muted-foreground transition-transform ${
+                          isExpanded ? "rotate-90 text-[#d1b773]" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <motion.div
+                      initial={false}
+                      animate={isExpanded ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
+                        {group.items.map((item) => {
+                          const categoryValue = `${group.name} / ${item}`;
+                          const isSelected = selectedCategories.includes(categoryValue);
+                          const isActive = keyboardItems[activeIndex] === categoryValue;
+
+                          return (
+                            <button
+                              key={categoryValue}
+                              type="button"
+                              role="option"
+                              aria-selected={isSelected}
+                              onClick={() => toggleCategory(categoryValue)}
+                              className={`flex items-center gap-3 rounded-2xl border px-3 py-3 text-left text-sm transition-all ${
+                                isSelected
+                                  ? "border-[#d1b773]/70 bg-[#d1b773]/15 text-[#f2dfaa] shadow-[0_0_28px_rgba(209,183,115,0.12)]"
+                                  : "border-white/10 bg-white/[0.03] text-muted-foreground hover:border-[#d1b773]/50 hover:text-foreground"
+                              } ${isActive ? "ring-1 ring-[#d1b773]/50" : ""}`}
+                            >
+                              <span
+                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+                                  isSelected
+                                    ? "border-[#d1b773] bg-[#d1b773] text-black"
+                                    : "border-white/20"
+                                }`}
+                              >
+                                {isSelected && <Check className="h-3.5 w-3.5" />}
+                              </span>
+                              <span>{item}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
 function Dashboard() {
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -197,17 +581,7 @@ function Dashboard() {
                       </select>
                     </div>
 
-                    <div className="space-y-3">
-                      <label className="block text-sm uppercase tracking-[0.24em] text-muted-foreground">
-                        Category
-                      </label>
-                      <input
-                        value={category}
-                        onChange={(event) => setCategory(event.target.value)}
-                        className="w-full rounded-3xl border border-border bg-[#090909] px-4 py-4 text-sm text-foreground outline-none transition focus:border-foreground"
-                        placeholder="Streetwear India, Minimal Luxe, etc."
-                      />
-                    </div>
+                    <CategorySelector value={category} onChange={setCategory} />
 
                     <div className="space-y-3">
                       <label className="block text-sm uppercase tracking-[0.24em] text-muted-foreground">
