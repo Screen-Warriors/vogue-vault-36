@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
@@ -21,8 +21,9 @@ import {
   ChevronDown,
   ChevronRight,
   Check,
+  Minus,
 } from "lucide-react";
-import { products } from "@/lib/data";
+import { products, type Product } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard")({
@@ -134,6 +135,12 @@ const categoryGroups = [
     ],
   },
 ];
+
+type StudioPiece = Product & {
+  stock: number;
+  sales: number;
+  status: "Live" | "Paused";
+};
 
 const popularCategories = [
   "Style-Based Clothing / Streetwear",
@@ -396,13 +403,22 @@ function CategorySelector({
 
 function Dashboard() {
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [managingPieces, setManagingPieces] = useState(false);
+  const [studioPieces, setStudioPieces] = useState<StudioPiece[]>(
+    products.slice(0, 5).map((product, index) => ({
+      ...product,
+      stock: 40 - index * 5,
+      sales: 42 - index * 6,
+      status: "Live",
+    })),
+  );
   const [pieceName, setPieceName] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [sizes, setSizes] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const stats = [
     { label: "Revenue (30d)", value: formatCurrency(48920), change: "+24.6%", icon: IndianRupee },
@@ -433,7 +449,7 @@ function Dashboard() {
       sizes.length === 0 ||
       !description ||
       !category ||
-      !imageFile
+      imageFiles.length === 0
     ) {
       alert("Please complete all upload fields.");
       return;
@@ -445,8 +461,38 @@ function Dashboard() {
     setSizes([]);
     setDescription("");
     setCategory("");
-    setImageFile(null);
+    setImageFiles([]);
     setUploadOpen(false);
+  };
+
+  const addPieceImage = (file: File | null | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    setImageFiles((files) => [...files, file]);
+  };
+
+  const removePieceImage = (index: number) => {
+    setImageFiles((files) => files.filter((_, fileIndex) => fileIndex !== index));
+  };
+
+  const updatePieceStock = (pieceId: string, change: number) => {
+    setStudioPieces((pieces) =>
+      pieces.map((piece) =>
+        piece.id === pieceId ? { ...piece, stock: Math.max(0, piece.stock + change) } : piece,
+      ),
+    );
+  };
+
+  const togglePieceStatus = (pieceId: string) => {
+    setStudioPieces((pieces) =>
+      pieces.map((piece) =>
+        piece.id === pieceId
+          ? { ...piece, status: piece.status === "Live" ? "Paused" : "Live" }
+          : piece,
+      ),
+    );
   };
 
   return (
@@ -600,25 +646,54 @@ function Dashboard() {
                       <label className="block text-sm uppercase tracking-[0.24em] text-muted-foreground">
                         Piece image
                       </label>
-                      <div className="rounded-3xl border border-border bg-[#090909] p-4">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="min-w-0">
-                            <p className="truncate text-sm text-foreground">
-                              {imageFile?.name ?? "No image selected"}
-                            </p>
-                            <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                              Preferred: 1200 x 1600px
-                            </p>
+                      <div className="space-y-3">
+                        {imageFiles.map((file, index) => (
+                          <div
+                            key={`${file.name}-${file.lastModified}-${index}`}
+                            className="rounded-3xl border border-border bg-[#090909] p-4"
+                          >
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm text-foreground">{file.name}</p>
+                                <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                                  Image {index + 1} added
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removePieceImage(index)}
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:bg-foreground hover:text-background"
+                                aria-label={`Remove image ${index + 1}`}
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
-                          <label className="cursor-pointer rounded-full bg-foreground px-4 py-3 text-xs uppercase tracking-[0.24em] text-background transition hover:bg-accent">
-                            Choose file
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
-                              className="sr-only"
-                            />
-                          </label>
+                        ))}
+
+                        <div className="rounded-3xl border border-border bg-[#090909] p-4">
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm text-foreground">
+                                {imageFiles.length ? "Add another image" : "No image selected"}
+                              </p>
+                              <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                                Preferred: 1200 x 1600px
+                              </p>
+                            </div>
+                            <label className="cursor-pointer rounded-full bg-foreground px-4 py-3 text-xs uppercase tracking-[0.24em] text-background transition hover:bg-accent">
+                              {imageFiles.length ? "Choose another" : "Choose file"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(event) => {
+                                  addPieceImage(event.target.files?.[0]);
+                                  event.currentTarget.value = "";
+                                }}
+                                className="sr-only"
+                              />
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -720,12 +795,17 @@ function Dashboard() {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-display text-2xl">Your pieces</h2>
-          <button className="text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-foreground inline-flex items-center gap-2">
-            Manage <ArrowUpRight className="w-3 h-3" />
+          <button
+            type="button"
+            aria-pressed={managingPieces}
+            onClick={() => setManagingPieces((isManaging) => !isManaging)}
+            className="text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-foreground inline-flex items-center gap-2"
+          >
+            {managingPieces ? "Done" : "Manage"} <ArrowUpRight className="w-3 h-3" />
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
+          <table className="w-full text-sm min-w-[720px]">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 <th className="pb-3 font-normal">Piece</th>
@@ -733,21 +813,75 @@ function Dashboard() {
                 <th className="pb-3 font-normal">Price</th>
                 <th className="pb-3 font-normal">Sales</th>
                 <th className="pb-3 font-normal">Status</th>
+                {managingPieces && <th className="pb-3 font-normal text-right">Actions</th>}
               </tr>
             </thead>
             <tbody>
-              {products.slice(0, 5).map((p, i) => (
+              {studioPieces.map((p) => (
                 <tr key={p.id} className="border-t border-border">
                   <td className="py-4 flex gap-3 items-center">
                     <img src={p.image} alt="" className="w-10 h-12 object-cover rounded-sm" />
                     <span>{p.name}</span>
                   </td>
-                  <td>{40 - i * 5}</td>
-                  <td className="tabular-nums">{formatCurrency(p.price)}</td>
-                  <td className="tabular-nums">{42 - i * 6}</td>
                   <td>
-                    <span className="text-accent text-xs uppercase tracking-[0.2em]">Live</span>
+                    <div className="flex items-center gap-3">
+                      {managingPieces && (
+                        <button
+                          type="button"
+                          onClick={() => updatePieceStock(p.id, -1)}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-foreground hover:text-foreground"
+                          aria-label={`Reduce stock for ${p.name}`}
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                      <span className="w-7 tabular-nums">{p.stock}</span>
+                      {managingPieces && (
+                        <button
+                          type="button"
+                          onClick={() => updatePieceStock(p.id, 1)}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-foreground hover:text-foreground"
+                          aria-label={`Increase stock for ${p.name}`}
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </td>
+                  <td className="tabular-nums">{formatCurrency(p.price)}</td>
+                  <td className="tabular-nums">{p.sales}</td>
+                  <td>
+                    {managingPieces ? (
+                      <button
+                        type="button"
+                        onClick={() => togglePieceStatus(p.id)}
+                        className={`text-xs uppercase tracking-[0.2em] transition hover:text-foreground ${
+                          p.status === "Live" ? "text-accent" : "text-muted-foreground"
+                        }`}
+                      >
+                        {p.status}
+                      </button>
+                    ) : (
+                      <span
+                        className={`text-xs uppercase tracking-[0.2em] ${
+                          p.status === "Live" ? "text-accent" : "text-muted-foreground"
+                        }`}
+                      >
+                        {p.status}
+                      </span>
+                    )}
+                  </td>
+                  {managingPieces && (
+                    <td className="text-right">
+                      <Link
+                        to="/products/$id"
+                        params={{ id: p.id }}
+                        className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
+                      >
+                        View <ArrowUpRight className="h-3 w-3" />
+                      </Link>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
