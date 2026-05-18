@@ -1,10 +1,21 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HeadContent, Link, Outlet, Scripts, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Link,
+  Outlet,
+  Scripts,
+  createRootRouteWithContext,
+  useRouter,
+} from "@tanstack/react-router";
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 
 import appCss from "../styles.css?url";
+import favicon from "../assets/favicon2.png?url";
 import { Footer } from "@/components/Footer";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { Navbar } from "@/components/Navbar";
+import theme from "@/theme";
 
 function NotFoundComponent() {
   return (
@@ -35,7 +46,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page did not load</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          This page did not load
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
@@ -67,10 +80,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "#Label - Luxury Fashion Marketplace for Independent Designers" },
-      { name: "description", content: "Discover and collect original apparel from emerging fashion designers. Cinematic, curated, limited." },
+      {
+        name: "description",
+        content:
+          "Discover and collect original apparel from emerging fashion designers. Cinematic, curated, limited.",
+      },
       { name: "author", content: "#Label" },
       { property: "og:title", content: "#Label - Luxury Fashion Marketplace" },
-      { property: "og:description", content: "A storytelling platform for independent apparel designers and the people who collect them." },
+      {
+        property: "og:description",
+        content:
+          "A storytelling platform for independent apparel designers and the people who collect them.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@label" },
@@ -79,6 +100,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        href: favicon,
+        type: "image/png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: favicon,
       },
     ],
   }),
@@ -106,15 +136,18 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 pb-20 md:pb-0">
-          <Outlet />
-        </main>
-        <Footer />
-        <MobileTabBar />
-      </div>
-    </QueryClientProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <QueryClientProvider client={queryClient}>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <main className="flex-1 pb-20 md:pb-0">
+            <Outlet />
+          </main>
+          <Footer />
+          <MobileTabBar />
+        </div>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

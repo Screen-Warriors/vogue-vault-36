@@ -159,9 +159,14 @@ function CategorySelector({
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [expanded, setExpanded] = useState<string[]>([categoryGroups[0].name, categoryGroups[1].name]);
+  const [expanded, setExpanded] = useState<string[]>([
+    categoryGroups[0].name,
+    categoryGroups[1].name,
+  ]);
   const [activeIndex, setActiveIndex] = useState(0);
   const selectedCategories = value ? value.split(", ").filter(Boolean) : [];
+  const categoryLimit = 3;
+  const hasReachedLimit = selectedCategories.length >= categoryLimit;
   const searchTerm = search.trim().toLowerCase();
   const filteredGroups = categoryGroups
     .map((group) => ({
@@ -181,11 +186,16 @@ function CategorySelector({
   };
 
   const toggleCategory = (item: string) => {
-    updateSelected(
-      selectedCategories.includes(item)
-        ? selectedCategories.filter((categoryItem) => categoryItem !== item)
-        : [...selectedCategories, item],
-    );
+    if (selectedCategories.includes(item)) {
+      updateSelected(selectedCategories.filter((categoryItem) => categoryItem !== item));
+      return;
+    }
+
+    if (hasReachedLimit) {
+      return;
+    }
+
+    updateSelected([...selectedCategories, item]);
   };
 
   const toggleGroup = (groupName: string) => {
@@ -227,55 +237,91 @@ function CategorySelector({
         Category
       </label>
 
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
           aria-haspopup="listbox"
           aria-expanded={open}
-          className="group flex w-full items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all hover:border-[#d1b773]/60 hover:shadow-[0_0_40px_rgba(209,183,115,0.12)] focus:border-[#d1b773] focus:outline-none"
+          className="group flex w-full items-center justify-between gap-4 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left shadow-[0_24px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all hover:border-[#FFFFFF]/60 hover:shadow-[0_0_40px_rgba(209,183,115,0.12)] focus:border-[#FFFFFF] focus:outline-none"
         >
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1 overflow-hidden">
             <p className="text-sm text-foreground">
               {selectedCategories.length
                 ? `${selectedCategories.length} categories selected`
                 : "Select premium categories"}
             </p>
-            <p className="mt-1 truncate text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              {selectedCategories.length ? selectedCategories.join(" / ") : "Search, expand, and tag your piece"}
+
+            <p className="mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              {selectedCategories.length
+                ? `${selectedCategories
+                    .slice(0, 2)
+                    .map((item) => item.split(" / ")[1] || item)
+                    .join(" / ")}${
+                    selectedCategories.length > 2 ? ` +${selectedCategories.length - 2} more` : ""
+                  }`
+                : "Search, expand, and tag your piece"}
             </p>
           </div>
+
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#d1b773]/30 bg-[#d1b773]/10 text-[#d1b773] transition group-hover:bg-[#d1b773]/20">
             <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
           </span>
         </button>
 
         {selectedCategories.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <motion.div
+            layout
+            className="mt-4 flex w-full flex-wrap items-center gap-3 overflow-hidden"
+          >
             {selectedCategories.map((item) => (
-              <button
+              <motion.div
                 key={item}
-                type="button"
-                onClick={() => toggleCategory(item)}
-                className="inline-flex items-center gap-2 rounded-full border border-[#d1b773]/30 bg-[#d1b773]/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#ead9a0] transition hover:border-[#d1b773] hover:bg-[#d1b773]/20"
+                layout
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.92 }}
+                transition={{
+                  duration: 0.2,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="max-w-full"
               >
-                {item}
-                <X className="h-3 w-3" />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => toggleCategory(item)}
+                  className="group inline-flex max-w-full items-center gap-3 rounded-full border border-[#d1b773]/30 bg-[#d1b773]/10 px-5 py-3 text-[10px] uppercase tracking-[0.22em] text-[#ead9a0] transition-all duration-300 hover:border-[#d1b773] hover:bg-[#d1b773]/20"
+                >
+                  <span
+                    className="overflow-hidden text-ellipsis whitespace-nowrap"
+                    style={{
+                      maxWidth: "220px",
+                    }}
+                  >
+                    {item}
+                  </span>
+
+                  <X className="h-3.5 w-3.5 flex-shrink-0 opacity-80 transition-opacity group-hover:opacity-100" />
+                </button>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         <motion.div
           initial={false}
           animate={open ? { opacity: 1, y: 8, height: "auto" } : { opacity: 0, y: -8, height: 0 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.24,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           className="overflow-hidden"
         >
           <div className="relative z-20 mt-2 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#080808]/95 shadow-[0_28px_100px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
             <div className="sticky top-0 z-10 border-b border-white/10 bg-[#080808]/95 p-4 backdrop-blur-xl">
               <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 focus-within:border-[#d1b773]/70">
                 <Search className="h-4 w-4 text-[#d1b773]" />
+
                 <input
                   value={search}
                   onChange={(event) => {
@@ -289,29 +335,42 @@ function CategorySelector({
               </div>
 
               <div className="mt-4">
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between gap-3">
                   <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                     Popular Categories
                   </p>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#d1b773]">
+
+                  <p className="shrink-0 text-[10px] uppercase tracking-[0.24em] text-[#d1b773]">
                     {selectedCategories.length} selected
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {popularCategories.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleCategory(item)}
-                      className={`rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.2em] transition ${
-                        selectedCategories.includes(item)
-                          ? "bg-[#d1b773] text-black"
-                          : "border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-[#d1b773]/70 hover:text-[#ead9a0]"
-                      }`}
-                    >
-                      {item.split(" / ")[1]}
-                    </button>
-                  ))}
+
+                <div className="flex max-w-full flex-wrap items-center gap-2 overflow-hidden">
+                  {popularCategories.map((item) => {
+                    const isSelected = selectedCategories.includes(item);
+                    const isDisabled = !isSelected && hasReachedLimit;
+
+                    return (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => !isDisabled && toggleCategory(item)}
+                        disabled={isDisabled}
+                        className={`inline-flex max-w-full items-center rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.2em] transition ${
+                          isSelected
+                            ? "bg-[#d1b773] text-black"
+                            : "border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-[#d1b773]/70 hover:text-[#ead9a0]"
+                        } ${isDisabled ? "cursor-not-allowed opacity-50" : ""}`}
+                        style={{
+                          maxWidth: "160px",
+                        }}
+                      >
+                        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                          {item.split(" / ")[1]}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -336,13 +395,18 @@ function CategorySelector({
                         <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d1b773]/20 bg-[#d1b773]/10 text-[#d1b773]">
                           <Icon className="h-4 w-4" />
                         </span>
+
                         <span>
-                          <span className="block text-sm font-medium text-foreground">{group.name}</span>
+                          <span className="block text-sm font-medium text-foreground">
+                            {group.name}
+                          </span>
+
                           <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                             {group.items.length} options
                           </span>
                         </span>
                       </span>
+
                       <ChevronRight
                         className={`h-4 w-4 text-muted-foreground transition-transform ${
                           isExpanded ? "rotate-90 text-[#d1b773]" : ""
@@ -352,14 +416,26 @@ function CategorySelector({
 
                     <motion.div
                       initial={false}
-                      animate={isExpanded ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+                      animate={
+                        isExpanded
+                          ? {
+                              height: "auto",
+                              opacity: 1,
+                            }
+                          : {
+                              height: 0,
+                              opacity: 0,
+                            }
+                      }
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
                       <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
                         {group.items.map((item) => {
                           const categoryValue = `${group.name} / ${item}`;
+
                           const isSelected = selectedCategories.includes(categoryValue);
+
                           const isActive = keyboardItems[activeIndex] === categoryValue;
 
                           return (
@@ -368,12 +444,19 @@ function CategorySelector({
                               type="button"
                               role="option"
                               aria-selected={isSelected}
-                              onClick={() => toggleCategory(categoryValue)}
+                              onClick={() =>
+                                !(!isSelected && hasReachedLimit) && toggleCategory(categoryValue)
+                              }
+                              disabled={!isSelected && hasReachedLimit}
                               className={`flex items-center gap-3 rounded-2xl border px-3 py-3 text-left text-sm transition-all ${
                                 isSelected
                                   ? "border-[#d1b773]/70 bg-[#d1b773]/15 text-[#f2dfaa] shadow-[0_0_28px_rgba(209,183,115,0.12)]"
                                   : "border-white/10 bg-white/[0.03] text-muted-foreground hover:border-[#d1b773]/50 hover:text-foreground"
-                              } ${isActive ? "ring-1 ring-[#d1b773]/50" : ""}`}
+                              } ${isActive ? "ring-1 ring-[#d1b773]/50" : ""} ${
+                                !isSelected && hasReachedLimit
+                                  ? "cursor-not-allowed opacity-50"
+                                  : ""
+                              }`}
                             >
                               <span
                                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
@@ -384,7 +467,10 @@ function CategorySelector({
                               >
                                 {isSelected && <Check className="h-3.5 w-3.5" />}
                               </span>
-                              <span>{item}</span>
+
+                              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                                {item}
+                              </span>
                             </button>
                           );
                         })}
@@ -613,7 +699,9 @@ function Dashboard() {
                       </label>
                       <select
                         value={sizes[0] ?? ""}
-                        onChange={(event) => setSizes(event.target.value ? [event.target.value] : [])}
+                        onChange={(event) =>
+                          setSizes(event.target.value ? [event.target.value] : [])
+                        }
                         className="w-full rounded-3xl border border-border bg-[#090909] px-4 py-4 text-sm text-foreground outline-none transition focus:border-foreground"
                       >
                         <option value="" className="bg-background text-muted-foreground">

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll, AnimatePresence } from "framer-motion";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useCart } from "@/hooks/use-cart";
 
 const links = [
   { to: "/", label: "Home" },
@@ -15,8 +16,21 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [pulse, setPulse] = useState(false);
+  const prevCartCount = useRef(0);
   const { scrollY } = useScroll();
+  const { cartCount } = useCart();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 24));
+
+  useEffect(() => {
+    if (cartCount > prevCartCount.current) {
+      setPulse(true);
+      const timeout = window.setTimeout(() => setPulse(false), 420);
+      prevCartCount.current = cartCount;
+      return () => window.clearTimeout(timeout);
+    }
+    prevCartCount.current = cartCount;
+  }, [cartCount]);
 
   return (
     <>
@@ -75,8 +89,34 @@ export function Navbar() {
               className="relative p-2.5 hover:bg-secondary rounded-full transition-colors"
               aria-label="Cart"
             >
-              <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.5} />
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent" />
+              <motion.span
+                animate={
+                  pulse
+                    ? { scale: [1, 1.08, 0.98, 1], rotate: [0, 2, -1, 0] }
+                    : { scale: 1, rotate: 0 }
+                }
+                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-flex items-center justify-center"
+              >
+                <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              </motion.span>
+              <AnimatePresence mode="wait">
+                {cartCount > 0 && (
+                  <motion.div
+                    key="cart-count"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 rounded-full bg-gradient-to-br from-amber-400/30 to-yellow-500/20 border border-amber-300/40 backdrop-blur-sm shadow-[0_4px_12px_rgba(251,146,60,0.15)]"
+                  >
+                    <span className="text-[11px] font-semibold text-amber-50 px-1 tabular-nums">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <span className="sr-only">{cartCount} items in cart</span>
             </Link>
             <Link
               to="/auth"

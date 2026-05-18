@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { Heart, Share2, Truck, ShieldCheck, RotateCcw, Minus, Plus } from "lucide-react";
 import { products } from "@/lib/data";
 import { ProductCard } from "@/components/ProductCard";
+import { useCart } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/utils";
 
 export const Route = createFileRoute("/products/$id")({
@@ -16,7 +17,10 @@ export const Route = createFileRoute("/products/$id")({
   head: ({ loaderData }) => ({
     meta: [
       { title: `${loaderData?.product.name ?? "Product"} - #Label` },
-      { name: "description", content: `${loaderData?.product.name} by ${loaderData?.product.designer}` },
+      {
+        name: "description",
+        content: `${loaderData?.product.name} by ${loaderData?.product.designer}`,
+      },
       { property: "og:image", content: loaderData?.product.image },
     ],
   }),
@@ -25,14 +29,35 @@ export const Route = createFileRoute("/products/$id")({
 function Countdown() {
   const [t, setT] = useState({ d: 2, h: 14, m: 32, s: 18 });
   useEffect(() => {
-    const i = setInterval(() => setT((p) => {
-      let { d, h, m, s } = p;
-      s--; if (s < 0) { s = 59; m--; } if (m < 0) { m = 59; h--; } if (h < 0) { h = 23; d--; }
-      return { d, h, m, s };
-    }), 1000);
+    const i = setInterval(
+      () =>
+        setT((p) => {
+          let { d, h, m, s } = p;
+          s--;
+          if (s < 0) {
+            s = 59;
+            m--;
+          }
+          if (m < 0) {
+            m = 59;
+            h--;
+          }
+          if (h < 0) {
+            h = 23;
+            d--;
+          }
+          return { d, h, m, s };
+        }),
+      1000,
+    );
     return () => clearInterval(i);
   }, []);
-  const items = [["Days", t.d], ["Hrs", t.h], ["Min", t.m], ["Sec", t.s]] as const;
+  const items = [
+    ["Days", t.d],
+    ["Hrs", t.h],
+    ["Min", t.m],
+    ["Sec", t.s],
+  ] as const;
   return (
     <div className="flex gap-3">
       {items.map(([l, v]) => (
@@ -49,36 +74,127 @@ function ProductPage() {
   const { product } = Route.useLoaderData();
   const [size, setSize] = useState("M");
   const [qty, setQty] = useState(1);
+  const [color, setColor] = useState("Onyx");
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const timerRef = useRef<number[]>([]);
+  const { addToCart } = useCart();
   const sizes = ["XS", "S", "M", "L", "XL"];
-  const colors = [{ n: "Onyx", c: "oklch(0.1 0 0)" }, { n: "Charcoal", c: "oklch(0.3 0 0)" }, { n: "Ivory", c: "oklch(0.95 0.01 90)" }];
+  const colors = [
+    { n: "Onyx", c: "oklch(0.1 0 0)" },
+    { n: "Charcoal", c: "oklch(0.3 0 0)" },
+    { n: "Ivory", c: "oklch(0.95 0.01 90)" },
+  ];
   const related = products.filter((p) => p.id !== product.id).slice(0, 4);
+
+  useEffect(() => {
+    return () => {
+      timerRef.current.forEach((id) => window.clearTimeout(id));
+      timerRef.current = [];
+    };
+  }, []);
+
+  const handleAddToCart = () => {
+    if (adding) return;
+    timerRef.current.forEach((id) => window.clearTimeout(id));
+    timerRef.current = [];
+
+    setAdding(true);
+    addToCart(product, qty, size, color);
+
+    const loadingTimer = window.setTimeout(() => {
+      setAdding(false);
+      setAdded(true);
+      setToastMessage(product.name);
+    }, 120);
+
+    const resetTimer = window.setTimeout(() => {
+      setAdded(false);
+    }, 1700);
+
+    const toastTimer = window.setTimeout(() => {
+      setToastMessage("");
+    }, 2200);
+
+    timerRef.current = [loadingTimer, resetTimer, toastTimer];
+  };
 
   return (
     <div className="pt-24">
+      <div className="pointer-events-none fixed inset-x-0 top-20 z-[60] flex justify-center px-4 sm:justify-end">
+        <AnimatePresence>
+          {toastMessage ? (
+            <motion.div
+              initial={{ opacity: 0, y: -16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -16, scale: 0.96 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="pointer-events-auto max-w-xs rounded-[32px] border border-white/10 bg-onyx/95 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+              aria-live="polite"
+            >
+              <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                Added to cart
+              </p>
+              <p className="mt-1 text-sm font-medium text-foreground">{toastMessage}</p>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+
       <div className="container-luxe">
         <nav className="text-xs uppercase tracking-[0.2em] text-muted-foreground py-6">
-          <Link to="/" className="hover:text-foreground">Home</Link> / <Link to="/designers" className="hover:text-foreground">{product.designer}</Link> / <span className="text-foreground">{product.name}</span>
+          <Link to="/" className="hover:text-foreground">
+            Home
+          </Link>{" "}
+          /{" "}
+          <Link to="/designers" className="hover:text-foreground">
+            {product.designer}
+          </Link>{" "}
+          / <span className="text-foreground">{product.name}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-3"
+          >
             <div className="aspect-[4/5] overflow-hidden rounded-sm bg-secondary">
               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[product.image, product.image, product.image].map((src, i) => (
                 <div key={i} className="aspect-square overflow-hidden rounded-sm hairline">
-                  <img src={src} alt="" className="w-full h-full object-cover opacity-70 hover:opacity-100 transition" />
+                  <img
+                    src={src}
+                    alt=""
+                    className="w-full h-full object-cover opacity-70 hover:opacity-100 transition"
+                  />
                 </div>
               ))}
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }} className="lg:sticky lg:top-28 self-start">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="lg:sticky lg:top-28 self-start"
+          >
             <p className="eyebrow text-accent">Limited Edition · 24/100</p>
             <h1 className="display-lg mt-3">{product.name}</h1>
-            <Link to="/designers/$id" params={{ id: product.designerId }} className="mt-2 inline-block text-sm text-muted-foreground luxe-link">by {product.designer}</Link>
-            <p className="mt-6 text-3xl font-display tabular-nums">{formatCurrency(product.price)}</p>
+            <Link
+              to="/designers/$id"
+              params={{ id: product.designerId }}
+              className="mt-2 inline-block text-sm text-muted-foreground luxe-link"
+            >
+              by {product.designer}
+            </Link>
+            <p className="mt-6 text-3xl font-display tabular-nums">
+              {formatCurrency(product.price)}
+            </p>
 
             <div className="mt-8 glass rounded-sm p-5">
               <p className="eyebrow mb-3">Drop ends in</p>
@@ -86,10 +202,17 @@ function ProductPage() {
             </div>
 
             <div className="mt-8">
-              <p className="eyebrow mb-3">Color · {colors[0].n}</p>
+              <p className="eyebrow mb-3">Color · {color}</p>
               <div className="flex gap-3">
                 {colors.map((c) => (
-                  <button key={c.n} className="w-10 h-10 rounded-full hairline ring-offset-2 ring-offset-background hover:ring-2 hover:ring-accent transition" style={{ background: c.c }} aria-label={c.n} />
+                  <button
+                    key={c.n}
+                    type="button"
+                    onClick={() => setColor(c.n)}
+                    className={`w-10 h-10 rounded-full hairline ring-offset-2 ring-offset-background transition ${color === c.n ? "ring-2 ring-accent" : "hover:ring-2 hover:ring-accent"}`}
+                    style={{ background: c.c }}
+                    aria-label={c.n}
+                  />
                 ))}
               </div>
             </div>
@@ -97,24 +220,63 @@ function ProductPage() {
             <div className="mt-8">
               <div className="flex justify-between mb-3">
                 <p className="eyebrow">Size</p>
-                <button className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground luxe-link">Size guide</button>
+                <button className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground luxe-link">
+                  Size guide
+                </button>
               </div>
               <div className="grid grid-cols-5 gap-2">
                 {sizes.map((s) => (
-                  <button key={s} onClick={() => setSize(s)} className={`py-3 text-sm hairline rounded-sm transition-all ${size === s ? "bg-foreground text-background border-foreground" : "hover:border-foreground/40"}`}>{s}</button>
+                  <button
+                    key={s}
+                    onClick={() => setSize(s)}
+                    className={`py-3 text-sm hairline rounded-sm transition-all ${size === s ? "bg-foreground text-background border-foreground" : "hover:border-foreground/40"}`}
+                  >
+                    {s}
+                  </button>
                 ))}
               </div>
             </div>
 
             <div className="mt-8 flex items-center gap-4">
               <div className="flex items-center hairline rounded-full">
-                <button onClick={() => setQty(Math.max(1, qty - 1))} className="p-3 hover:text-accent"><Minus className="w-3.5 h-3.5" /></button>
+                <button
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  className="p-3 hover:text-accent"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
                 <span className="w-10 text-center tabular-nums">{qty}</span>
-                <button onClick={() => setQty(qty + 1)} className="p-3 hover:text-accent"><Plus className="w-3.5 h-3.5" /></button>
+                <button onClick={() => setQty(qty + 1)} className="p-3 hover:text-accent">
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
               </div>
-              <button className="flex-1 bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors">Add to cart</button>
-              <button className="p-4 hairline rounded-full hover:bg-secondary"><Heart className="w-4 h-4" /></button>
-              <button className="p-4 hairline rounded-full hover:bg-secondary"><Share2 className="w-4 h-4" /></button>
+              <motion.button
+                type="button"
+                onClick={handleAddToCart}
+                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                animate={
+                  added
+                    ? { scale: [1, 0.98, 1.02, 1], boxShadow: "0 0 0 16px rgba(72, 187, 120, 0.1)" }
+                    : { scale: 1 }
+                }
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="flex-1 bg-foreground text-background py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors relative overflow-hidden"
+                aria-live="polite"
+              >
+                <span className="flex items-center justify-center gap-2">
+                  {adding ? (
+                    <span className="inline-flex h-4 w-4 rounded-full border border-white/10 border-t-accent animate-spin" />
+                  ) : null}
+                  {added ? "Added to Cart ✓" : "Add to cart"}
+                </span>
+              </motion.button>
+              <button className="p-4 hairline rounded-full hover:bg-secondary">
+                <Heart className="w-4 h-4" />
+              </button>
+              <button className="p-4 hairline rounded-full hover:bg-secondary">
+                <Share2 className="w-4 h-4" />
+              </button>
             </div>
 
             <div className="mt-10 grid grid-cols-3 gap-4 text-center">
@@ -125,28 +287,49 @@ function ProductPage() {
               ].map(({ i: Icon, l }) => (
                 <div key={l} className="hairline rounded-sm py-4">
                   <Icon className="w-4 h-4 mx-auto text-accent" strokeWidth={1.5} />
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{l}</p>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    {l}
+                  </p>
                 </div>
               ))}
             </div>
 
             <div className="mt-10 space-y-4 border-t border-border pt-8">
               <details className="group">
-                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]"><span>Description</span><span className="group-open:rotate-45 transition">+</span></summary>
-                <p className="text-muted-foreground pb-4">A study in restraint. Hand-tailored in the designer's Berlin atelier from Italian virgin wool. Cut for a relaxed, sculptural silhouette with peak lapels and horn buttons.</p>
+                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]">
+                  <span>Description</span>
+                  <span className="group-open:rotate-45 transition">+</span>
+                </summary>
+                <p className="text-muted-foreground pb-4">
+                  A study in restraint. Hand-tailored in the designer's Berlin atelier from Italian
+                  virgin wool. Cut for a relaxed, sculptural silhouette with peak lapels and horn
+                  buttons.
+                </p>
               </details>
               <details className="group border-t border-border">
-                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]"><span>Composition & care</span><span className="group-open:rotate-45 transition">+</span></summary>
-                <p className="text-muted-foreground pb-4">100% Italian virgin wool. Lining: 100% cupro. Dry clean only. Made in Germany.</p>
+                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]">
+                  <span>Composition & care</span>
+                  <span className="group-open:rotate-45 transition">+</span>
+                </summary>
+                <p className="text-muted-foreground pb-4">
+                  100% Italian virgin wool. Lining: 100% cupro. Dry clean only. Made in Germany.
+                </p>
               </details>
               <details className="group border-t border-border">
-                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]"><span>Reviews · 4.9</span><span className="group-open:rotate-45 transition">+</span></summary>
+                <summary className="flex justify-between cursor-pointer py-3 text-sm uppercase tracking-[0.2em]">
+                  <span>Reviews · 4.9</span>
+                  <span className="group-open:rotate-45 transition">+</span>
+                </summary>
                 <div className="space-y-4 pb-4">
-                  {[1,2].map((i) => (
+                  {[1, 2].map((i) => (
                     <div key={i} className="text-sm">
                       <p className="text-accent">★★★★★</p>
-                      <p className="mt-1 text-muted-foreground">"Worth every penny. Construction is impeccable, fits like couture."</p>
-                      <p className="text-xs uppercase tracking-[0.2em] mt-1 text-muted-foreground">— Verified buyer</p>
+                      <p className="mt-1 text-muted-foreground">
+                        "Worth every penny. Construction is impeccable, fits like couture."
+                      </p>
+                      <p className="text-xs uppercase tracking-[0.2em] mt-1 text-muted-foreground">
+                        — Verified buyer
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -156,9 +339,13 @@ function ProductPage() {
         </div>
 
         <section className="mt-32">
-          <h2 className="display-lg mb-10">You may also <em className="gradient-text not-italic">love</em></h2>
+          <h2 className="display-lg mb-10">
+            You may also <em className="gradient-text not-italic">love</em>
+          </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8">
-            {related.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
+            {related.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
           </div>
         </section>
       </div>

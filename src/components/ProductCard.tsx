@@ -2,9 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import type { Product } from "@/lib/data";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { formatCurrency } from "@/lib/utils";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const saved = isWishlisted(product.id);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -30,11 +34,16 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             </span>
           )}
           <button
-            onClick={(e) => { e.preventDefault(); }}
-            className="absolute top-3 right-3 p-2.5 glass rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 hover:bg-foreground hover:text-background"
-            aria-label="Add to wishlist"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist(product.id);
+            }}
+            className={`absolute top-3 right-3 p-2.5 glass rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 hover:bg-foreground hover:text-background ${saved ? "bg-foreground/10 text-accent" : ""}`}
+            aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <Heart className="w-4 h-4" strokeWidth={1.5} />
+            <Heart className={`w-4 h-4 ${saved ? "fill-accent" : ""}`} strokeWidth={1.5} />
           </button>
           <div className="absolute bottom-4 left-4 right-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
             <button className="w-full py-3 bg-foreground/95 text-background text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors">
@@ -44,7 +53,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground truncate">{product.designer}</p>
+            <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground truncate">
+              {product.designer}
+            </p>
             <h3 className="mt-1 text-sm font-medium text-foreground truncate">{product.name}</h3>
           </div>
           <p className="text-sm tabular-nums shrink-0">{formatCurrency(product.price)}</p>
