@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { ArrowRight, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/india-hero.png";
 import collection1 from "@/assets/india-designer-1.png";
@@ -12,6 +12,7 @@ import { DesignerCard } from "@/components/DesignerCard";
 import { SectionHeader } from "@/components/SectionHeader";
 
 const categoryImages = [collection1, collection2, collection3, heroImg];
+const premiumEase = [0.22, 1, 0.36, 1] as const;
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -27,16 +28,57 @@ export const Route = createFileRoute("/")({
   }),
 });
 
+function PremiumCTA({
+  to,
+  children,
+  variant = "solid",
+}: {
+  to: string;
+  children: ReactNode;
+  variant?: "solid" | "glass";
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -3, x: 2 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.32, ease: premiumEase }}
+      className="group relative inline-flex"
+    >
+      <Link
+        to={to}
+        className={`relative isolate inline-flex items-center gap-3 overflow-hidden px-8 py-4 text-xs uppercase tracking-[0.24em] transition-all duration-500 ${
+          variant === "solid"
+            ? "bg-foreground text-background hover:bg-accent hover:text-accent-foreground"
+            : "glass hover:bg-foreground/10"
+        }`}
+      >
+        <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-[320%]" />
+        </span>
+        <span className="pointer-events-none absolute inset-0 border border-accent/0 transition-all duration-500 group-hover:border-accent/45 group-hover:shadow-[0_0_34px_hsl(var(--accent)/0.16)]" />
+        <span className="relative inline-flex items-center gap-3">{children}</span>
+      </Link>
+    </motion.div>
+  );
+}
+
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 86]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 34]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1.02, 1.075]);
+  const lightY = useTransform(scrollYProgress, [0, 1], [0, 58]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const trustSignals = [
+    "500+ Emerging Designers",
+    "Curated Indian Luxury Fashion",
+    "Limited Designer Drops",
+  ];
 
   return (
     <section ref={ref} className="relative h-[100svh] min-h-[680px] overflow-hidden">
-      <motion.div style={{ scale, y }} className="absolute inset-0">
+      <motion.div style={{ scale, y: imageY }} className="absolute inset-0 will-change-transform">
         <img
           src={heroImg}
           alt="Editorial fashion"
@@ -45,6 +87,18 @@ function Hero() {
         />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-b from-onyx/40 via-onyx/30 to-onyx" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_62%,rgba(0,0,0,0.38),transparent_38%),radial-gradient(ellipse_at_74%_24%,rgba(255,184,77,0.08),transparent_34%)]" />
+      <motion.div
+        style={{ y: lightY }}
+        className="pointer-events-none absolute -top-24 left-[8%] h-72 w-72 rounded-full bg-accent/10 blur-[110px] will-change-transform"
+        animate={{ x: [0, 18, 0], opacity: [0.16, 0.24, 0.16] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="pointer-events-none absolute bottom-24 right-[14%] h-80 w-[28rem] rounded-full bg-accent/8 blur-[130px]"
+        animate={{ x: [0, -22, 0], y: [0, 12, 0], opacity: [0.08, 0.16, 0.08] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+      />
       <div className="absolute inset-0 grain" />
 
       <motion.div
@@ -59,16 +113,33 @@ function Hero() {
         >
           <Sparkles className="w-3.5 h-3.5 text-accent" /> India / Festive 26 / Volume IV
         </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="display-xl max-w-5xl"
-        >
-          India's next
-          <br />
-          fashion <em className="gradient-text not-italic">movement.</em>
-        </motion.h1>
+        <div className="relative max-w-5xl">
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-8 bottom-0 h-28 bg-gradient-to-r from-transparent via-accent/12 to-transparent blur-3xl"
+            animate={{ x: ["-6%", "6%", "-6%"], opacity: [0.1, 0.2, 0.1] }}
+            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="relative font-display text-[clamp(2.65rem,6.8vw,6.6rem)] leading-[0.96] tracking-[-0.035em]"
+          >
+            India's next
+            <br />
+            fashion{" "}
+            <em className="gradient-text relative inline-block not-italic">
+              <motion.span
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 blur-sm"
+                animate={{ x: ["-80%", "90%"], opacity: [0, 0.16, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              />
+              movement.
+            </em>
+          </motion.h1>
+        </div>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,24 +150,29 @@ function Hero() {
           new style generation.
         </motion.p>
         <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.02, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-7 flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground"
+        >
+          {trustSignals.map((signal, index) => (
+            <span key={signal} className="inline-flex items-center gap-4">
+              {index > 0 && <span className="h-1 w-1 rounded-full bg-accent/70" />}
+              <span>{signal}</span>
+            </span>
+          ))}
+        </motion.div>
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.1 }}
           className="mt-10 flex flex-wrap items-center gap-4"
         >
-          <Link
-            to="/collections"
-            className="group inline-flex items-center gap-3 bg-foreground text-background px-8 py-4 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
+          <PremiumCTA to="/collections">
             Explore Indian drops
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            to="/designers"
-            className="inline-flex items-center gap-3 px-8 py-4 text-xs uppercase tracking-[0.24em] glass hover:bg-foreground/10 transition-colors"
-          >
-            Meet the designers
-          </Link>
+          </PremiumCTA>
+          <PremiumCTA to="/designers" variant="glass">Meet the designers</PremiumCTA>
         </motion.div>
       </motion.div>
 
@@ -112,6 +188,90 @@ function Hero() {
           transition={{ duration: 1.8, repeat: Infinity }}
           className="w-px h-10 bg-foreground/30"
         />
+      </motion.div>
+    </section>
+  );
+}
+
+function TrustSystem() {
+  const items = [
+    "Verified Designers",
+    "Limited Edition Drops",
+    "Independent Creator Fashion",
+    "Secure Checkout",
+    "Premium Quality",
+  ];
+
+  return (
+    <section className="border-y border-border/50 bg-onyx/35">
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.75, ease: premiumEase }}
+        className="container-luxe flex flex-wrap items-center justify-center gap-x-5 gap-y-3 py-6 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground md:justify-between"
+      >
+        {items.map((item, index) => (
+          <span key={item} className="inline-flex items-center gap-5">
+            <span className="text-accent">✓</span>
+            <span>{item}</span>
+            {index < items.length - 1 && (
+              <span className="hidden h-px w-8 bg-gradient-to-r from-transparent via-accent/60 to-transparent lg:inline-block" />
+            )}
+          </span>
+        ))}
+      </motion.div>
+    </section>
+  );
+}
+
+function DesignerManifesto() {
+  const lines = [
+    "India's next generation of fashion creators.",
+    "Independent designers building tomorrow's luxury.",
+    "Fashion is no longer owned by legacy brands.",
+    "The future belongs to creators.",
+  ];
+
+  return (
+    <section className="container-luxe py-20 md:py-28">
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.9, ease: premiumEase }}
+        className="relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-8 shadow-[0_24px_100px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-14"
+      >
+        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+        <motion.div
+          aria-hidden="true"
+          className="absolute -right-24 top-10 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
+          animate={{ x: [0, -18, 0], opacity: [0.1, 0.18, 0.1] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-4">
+            <p className="eyebrow text-accent">Designer Manifesto</p>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              #Label is India's designer discovery platform: a luxury creator ecosystem for limited
+              drops, craft-led labels, and the new houses shaping culture.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            {lines.map((line, index) => (
+              <motion.p
+                key={line}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.75, delay: index * 0.08, ease: premiumEase }}
+                className="border-t border-border/50 py-5 font-display text-3xl leading-tight text-foreground md:text-5xl"
+              >
+                {line}
+              </motion.p>
+            ))}
+          </div>
+        </div>
       </motion.div>
     </section>
   );
@@ -316,6 +476,8 @@ function Landing() {
   return (
     <>
       <Hero />
+      <TrustSystem />
+      <DesignerManifesto />
       <Marquee />
 
       <section className="container-luxe py-20 md:py-28">

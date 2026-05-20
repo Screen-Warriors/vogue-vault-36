@@ -150,6 +150,29 @@ const popularCategories = [
   "Premium Sections / Designer Collection",
 ];
 
+const premiumEase = [0.22, 1, 0.36, 1] as const;
+
+const studioPerformance = [
+  { value: "320+", label: "Designer Network" },
+  { value: "1800+", label: "Marketplace Pieces" },
+  { value: "4.2M+", label: "Discovery Impressions" },
+  { value: "50+", label: "New Drops Monthly" },
+];
+
+const creatorInsights = [
+  "Streetwear pieces outperforming by +18%.",
+  "Minimal Luxe trending among premium buyers.",
+  "Creator engagement strongest evenings 7-10 PM.",
+  "Luxury ethnic pieces growing +12%.",
+];
+
+const orderMeta = [
+  { location: "Mumbai", time: "Today 7:42 PM", status: "Premium Buyer" },
+  { location: "Delhi", time: "2h ago", status: "Processing" },
+  { location: "Ahmedabad", time: "Yesterday", status: "Limited Drop" },
+  { location: "Bangalore", time: "Today", status: "Delivered" },
+];
+
 function CategorySelector({
   value,
   onChange,
@@ -507,10 +530,28 @@ function Dashboard() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const stats = [
-    { label: "Revenue (30d)", value: formatCurrency(48920), change: "+24.6%", icon: IndianRupee },
-    { label: "Orders", value: "127", change: "+12", icon: Package },
-    { label: "Profile views", value: "12.4K", change: "+38%", icon: Eye },
-    { label: "Conversion", value: "4.8%", change: "+0.6", icon: TrendingUp },
+    {
+      label: "Revenue",
+      value: formatCurrency(48920),
+      change: "+26%",
+      meta: "vs previous month",
+      icon: IndianRupee,
+    },
+    { label: "Orders", value: "127", change: "+12", meta: "Luxury pieces sold", icon: Package },
+    {
+      label: "Profile views",
+      value: "12.4K",
+      change: "+38%",
+      meta: "Creator discovery growth",
+      icon: Eye,
+    },
+    {
+      label: "Conversion",
+      value: "4.8%",
+      change: "+0.6%",
+      meta: "Marketplace performance",
+      icon: TrendingUp,
+    },
   ];
 
   useEffect(() => {
@@ -582,7 +623,22 @@ function Dashboard() {
   };
 
   return (
-    <div className="pt-28 pb-20 container-luxe">
+    <div className="relative overflow-hidden pt-28 pb-20">
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-[8%] top-16 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
+        animate={{ x: [0, 18, 0], opacity: [0.1, 0.18, 0.1] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-[6%] top-[36rem] h-96 w-96 rounded-full bg-accent/6 blur-[140px]"
+        animate={{ y: [0, 24, 0], opacity: [0.08, 0.14, 0.08] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="pointer-events-none absolute inset-0 grain opacity-35" />
+
+      <div className="container-luxe relative">
       <div className="flex items-end justify-between flex-wrap gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -591,14 +647,29 @@ function Dashboard() {
         >
           <p className="eyebrow mb-2">#Label Studio / Aria Volkov</p>
           <h1 className="display-lg">Your atelier.</h1>
+          <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            {["Build India's next luxury label", "Independent creators shape tomorrow", "Design. Launch. Grow."].map(
+              (item, index) => (
+                <span key={item} className="inline-flex items-center gap-4">
+                  {index > 0 && <span className="h-1 w-1 rounded-full bg-accent/70" />}
+                  {item}
+                </span>
+              ),
+            )}
+          </div>
         </motion.div>
-        <button
+        <motion.button
           type="button"
           onClick={() => setUploadOpen(true)}
-          className="inline-flex items-center gap-3 bg-foreground text-background px-6 py-3 text-xs uppercase tracking-[0.24em] hover:bg-accent hover:text-accent-foreground transition-colors"
+          whileHover={{ y: -3, x: 2 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.3, ease: premiumEase }}
+          className="group relative isolate inline-flex items-center gap-3 overflow-hidden bg-foreground text-background px-6 py-3 text-xs uppercase tracking-[0.24em] transition-colors hover:bg-accent hover:text-accent-foreground hover:shadow-[0_0_36px_hsl(var(--accent)/0.16)]"
         >
+          <span className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-[320%]" />
+          <span className="pointer-events-none absolute inset-0 border border-accent/0 transition-all duration-500 group-hover:border-accent/45" />
           <Plus className="w-4 h-4" /> Upload piece
-        </button>
+        </motion.button>
       </div>
 
       {uploadOpen && (
@@ -820,33 +891,69 @@ function Dashboard() {
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: i * 0.05 }}
-            className="glass rounded-sm p-5"
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, delay: i * 0.05, ease: premiumEase }}
+            whileHover={{ y: -3 }}
+            className="group relative overflow-hidden rounded-sm border border-border/60 bg-background/30 p-5 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:shadow-[0_20px_70px_rgba(0,0,0,0.28),0_0_34px_hsl(var(--accent)/0.1)]"
           >
+            <div className="absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-accent/55 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             <div className="flex justify-between">
               <s.icon className="w-4 h-4 text-accent" strokeWidth={1.5} />
-              <span className="text-xs text-accent">{s.change}</span>
+              <span className="rounded-full border border-accent/25 bg-accent/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-accent">
+                {s.change}
+              </span>
             </div>
             <p className="font-display text-3xl mt-3 tabular-nums">{s.value}</p>
             <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground mt-1">
               {s.label}
             </p>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{s.meta}</p>
           </motion.div>
         ))}
       </div>
+
+      <motion.section
+        initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.8, ease: premiumEase }}
+        className="mt-8 grid gap-4 lg:grid-cols-4"
+      >
+        {studioPerformance.map((item, index) => (
+          <motion.div
+            key={item.label}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: index * 0.05, ease: premiumEase }}
+            className="relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-6 text-center backdrop-blur-xl"
+          >
+            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+            <p className="font-display text-4xl">{item.value}</p>
+            <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              {item.label}
+            </p>
+          </motion.div>
+        ))}
+      </motion.section>
 
       <div className="mt-8 grid lg:grid-cols-3 gap-6">
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="lg:col-span-2 glass rounded-sm p-6 md:p-8"
+          className="lg:col-span-2 relative overflow-hidden rounded-sm border border-border/60 bg-background/30 p-6 backdrop-blur-xl md:p-8 shadow-[0_24px_90px_rgba(0,0,0,0.24)]"
         >
+          <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
           <div className="flex justify-between items-center mb-6">
-            <h2 className="font-display text-2xl">Sales — last 14 days</h2>
-            <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Daily</span>
+            <div>
+              <h2 className="font-display text-2xl">Sales — last 14 days</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Luxury creator insights from marketplace momentum.
+              </p>
+            </div>
+            <span className="text-xs uppercase tracking-[0.24em] text-accent">Daily</span>
           </div>
           <Chart />
         </motion.section>
@@ -855,25 +962,61 @@ function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="glass rounded-sm p-6 md:p-8"
+          className="relative overflow-hidden rounded-sm border border-border/60 bg-background/30 p-6 backdrop-blur-xl md:p-8"
         >
+          <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
           <h2 className="font-display text-2xl mb-6">Recent orders</h2>
           <div className="space-y-4">
-            {products.slice(0, 4).map((p, i) => (
-              <div key={i} className="flex gap-3 items-center">
-                <img src={p.image} alt="" className="w-12 h-14 object-cover rounded-sm" />
+            {products.slice(0, 4).map((p, i) => {
+              const meta = orderMeta[i];
+              return (
+              <motion.div
+                key={i}
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.25, ease: premiumEase }}
+                className="group flex gap-3 items-center rounded-sm border border-transparent p-2 transition-all hover:border-accent/30 hover:bg-foreground/[0.04]"
+              >
+                <img src={p.image} alt="" className="w-12 h-14 object-cover rounded-sm ring-1 ring-border/60" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm truncate">{p.name}</p>
                   <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mt-0.5">
-                    #MX{1042 + i}
+                    #MX{1042 + i} / {meta.location} / {meta.time}
                   </p>
                 </div>
-                <span className="text-xs text-accent">Shipped</span>
-              </div>
-            ))}
+                <span className="rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[9px] uppercase tracking-[0.18em] text-accent">
+                  {meta.status}
+                </span>
+              </motion.div>
+            )})}
           </div>
         </motion.section>
       </div>
+
+      <motion.section
+        initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.8, ease: premiumEase }}
+        className="mt-8 relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-6 backdrop-blur-xl md:p-8"
+      >
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+        <p className="eyebrow text-accent mb-4">Creator Insights</p>
+        <div className="grid gap-4 md:grid-cols-4">
+          {creatorInsights.map((insight, index) => (
+            <motion.div
+              key={insight}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.05, ease: premiumEase }}
+              className="rounded-sm border border-border/60 bg-background/25 p-5"
+            >
+              <p className="text-[10px] uppercase tracking-[0.22em] text-accent">0{index + 1}</p>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{insight}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
 
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -976,6 +1119,51 @@ function Dashboard() {
           </table>
         </div>
       </motion.section>
+
+      <motion.section
+        initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.85, ease: premiumEase }}
+        className="mt-8 relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-8 shadow-[0_24px_100px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-12"
+      >
+        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+        <motion.div
+          aria-hidden="true"
+          className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
+          animate={{ x: [0, -18, 0], opacity: [0.1, 0.18, 0.1] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-4">
+            <p className="eyebrow text-accent">Creator Manifesto</p>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              The operating system for India's independent luxury designers: launch drops, read
+              creator analytics, and build fashion movements.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            {[
+              "Independent designers deserve discovery.",
+              "Luxury belongs to creators.",
+              "Build India's next fashion movement.",
+              "The future of Indian luxury belongs to independent creators.",
+            ].map((line, index) => (
+              <motion.p
+                key={line}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: index * 0.08, ease: premiumEase }}
+                className="border-t border-border/50 py-5 font-display text-3xl leading-tight text-foreground md:text-5xl"
+              >
+                {line}
+              </motion.p>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+      </div>
     </div>
   );
 }
@@ -983,17 +1171,33 @@ function Dashboard() {
 function Chart() {
   const data = [12, 18, 14, 22, 28, 24, 32, 30, 38, 34, 42, 48, 44, 56];
   const max = Math.max(...data);
+  const [active, setActive] = useState<number | null>(null);
   return (
-    <div className="flex items-end gap-2 h-48">
+    <div className="relative flex items-end gap-2 h-48">
       {data.map((v, i) => (
         <motion.div
           key={i}
           initial={{ height: 0 }}
           animate={{ height: `${(v / max) * 100}%` }}
-          transition={{ duration: 0.7, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-          className="flex-1 bg-gradient-to-t from-accent/30 to-accent rounded-t-sm hover:opacity-80 transition-opacity"
+          transition={{ duration: 0.8, delay: i * 0.04, ease: premiumEase }}
+          onMouseEnter={() => setActive(i)}
+          onMouseLeave={() => setActive(null)}
+          className="relative flex-1 rounded-t-sm bg-gradient-to-t from-accent/20 via-accent/55 to-accent transition-all hover:shadow-[0_0_26px_hsl(var(--accent)/0.22)]"
           title={`Day ${i + 1}: ${formatCurrency(v * 100)}`}
-        />
+        >
+          {active === i && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              className="absolute bottom-[calc(100%+0.75rem)] left-1/2 z-10 w-36 -translate-x-1/2 rounded-sm border border-accent/30 bg-onyx/95 p-3 text-center shadow-[0_18px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+            >
+              <p className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                Day {i + 1}
+              </p>
+              <p className="mt-1 font-display text-xl">{formatCurrency(v * 100)}</p>
+            </motion.div>
+          )}
+        </motion.div>
       ))}
     </div>
   );

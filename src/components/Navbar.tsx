@@ -126,8 +126,8 @@ export function Navbar() {
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "glass-strong border-b border-border/40 shadow-card"
-            : "bg-onyx/70 backdrop-blur-xl border-b border-foreground/10"
+            ? "bg-onyx/75 backdrop-blur-2xl border-b border-accent/15 shadow-[0_18px_70px_rgba(0,0,0,0.35)]"
+            : "bg-onyx/55 backdrop-blur-lg border-b border-foreground/10"
         }`}
       >
         <nav
@@ -145,8 +145,8 @@ export function Navbar() {
               <li key={link.to}>
                 <Link
                   to={link.to}
-                  className="text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-foreground transition-colors luxe-link"
-                  activeProps={{ className: "text-foreground" }}
+                  className="luxe-nav-link text-xs uppercase tracking-[0.24em] text-muted-foreground transition-colors duration-500 hover:text-foreground"
+                  activeProps={{ className: "text-foreground luxe-nav-active" }}
                   activeOptions={{ exact: link.to === "/" }}
                 >
                   {link.label}

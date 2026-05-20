@@ -195,6 +195,36 @@
     transform-origin: left;
   }
 
+  .luxe-nav-link {
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 0 transparent;
+  }
+  .luxe-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.55rem;
+    height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 16px oklch(0.78 0.13 78 / 0.25);
+    transform: scaleX(0);
+    transform-origin: left;
+    opacity: 0;
+    transition:
+      transform 0.55s var(--transition-luxe),
+      opacity 0.55s var(--transition-luxe);
+  }
+  .luxe-nav-link:hover {
+    text-shadow: 0 0 22px oklch(0.78 0.13 78 / 0.16);
+  }
+  .luxe-nav-link:hover::after,
+  .luxe-nav-active::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
   .grain::before {
     content: "";
     position: absolute;

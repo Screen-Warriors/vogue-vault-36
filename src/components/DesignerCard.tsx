@@ -19,7 +19,9 @@ export function DesignerCard({ designer, index = 0 }: { designer: Designer; inde
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      className="cursor-pointer"
+      whileHover={{ y: -4, x: 2 }}
+      whileTap={{ scale: 0.99 }}
+      className="group/card cursor-pointer"
       onClick={handleCardClick}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -29,12 +31,13 @@ export function DesignerCard({ designer, index = 0 }: { designer: Designer; inde
       role="button"
       tabIndex={0}
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-card group">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-sm border border-transparent bg-card transition-all duration-500 group-hover/card:border-accent/35 group-hover/card:shadow-[0_24px_80px_rgba(0,0,0,0.32),0_0_42px_hsl(var(--accent)/0.1)]">
+        <div className="pointer-events-none absolute inset-x-5 top-0 z-10 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
         <img
           src={designer.image}
           alt={designer.name}
           loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1500ms] group-hover/card:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-onyx via-onyx/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-6">
