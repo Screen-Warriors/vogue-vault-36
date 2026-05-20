@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as TrendingRouteImport } from './routes/trending'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as DesignersRouteImport } from './routes/designers'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CollectionsRouteImport } from './routes/collections'
@@ -32,6 +33,11 @@ const WishlistRoute = WishlistRouteImport.update({
 const TrendingRoute = TrendingRouteImport.update({
   id: '/trending',
   path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignersRoute = DesignersRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/collections': typeof CollectionsRoute
   '/dashboard': typeof DashboardRoute
   '/designers': typeof DesignersRouteWithChildren
+  '/search': typeof SearchRoute
   '/trending': typeof TrendingRoute
   '/wishlist': typeof WishlistRoute
   '/designers/$id': typeof DesignersIdRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/collections': typeof CollectionsRoute
   '/dashboard': typeof DashboardRoute
   '/designers': typeof DesignersRouteWithChildren
+  '/search': typeof SearchRoute
   '/trending': typeof TrendingRoute
   '/wishlist': typeof WishlistRoute
   '/designers/$id': typeof DesignersIdRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/collections': typeof CollectionsRoute
   '/dashboard': typeof DashboardRoute
   '/designers': typeof DesignersRouteWithChildren
+  '/search': typeof SearchRoute
   '/trending': typeof TrendingRoute
   '/wishlist': typeof WishlistRoute
   '/designers/$id': typeof DesignersIdRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/dashboard'
     | '/designers'
+    | '/search'
     | '/trending'
     | '/wishlist'
     | '/designers/$id'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/dashboard'
     | '/designers'
+    | '/search'
     | '/trending'
     | '/wishlist'
     | '/designers/$id'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/dashboard'
     | '/designers'
+    | '/search'
     | '/trending'
     | '/wishlist'
     | '/designers/$id'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   CollectionsRoute: typeof CollectionsRoute
   DashboardRoute: typeof DashboardRoute
   DesignersRoute: typeof DesignersRouteWithChildren
+  SearchRoute: typeof SearchRoute
   TrendingRoute: typeof TrendingRoute
   WishlistRoute: typeof WishlistRoute
   OrdersIdRoute: typeof OrdersIdRoute
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       path: '/trending'
       fullPath: '/trending'
       preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/designers': {
@@ -334,6 +354,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionsRoute: CollectionsRoute,
   DashboardRoute: DashboardRoute,
   DesignersRoute: DesignersRouteWithChildren,
+  SearchRoute: SearchRoute,
   TrendingRoute: TrendingRoute,
   WishlistRoute: WishlistRoute,
   OrdersIdRoute: OrdersIdRoute,
