@@ -173,58 +173,6 @@ function TrendStats() {
   );
 }
 
-function TrendInsight() {
-  const insights = [
-    "Streetwear India continues defining India's creator luxury movement.",
-    "Minimal luxury silhouettes dominate creator selections.",
-    "Indo-Western continues premium growth.",
-    "Independent labels increasingly shape luxury fashion discovery.",
-  ];
-
-  return (
-    <section className="container-luxe py-20 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.85, ease: premiumEase }}
-        className="relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-8 shadow-[0_24px_100px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-14"
-      >
-        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
-        <motion.div
-          aria-hidden="true"
-          className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
-          animate={{ x: [0, -18, 0], opacity: [0.1, 0.18, 0.1] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-4">
-            <p className="eyebrow text-accent">Trend Insight</p>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              #Label reads creator saves, limited drops, and independent designer momentum as
-              cultural luxury signals.
-            </p>
-          </div>
-          <div className="lg:col-span-8">
-            {insights.map((line, index) => (
-              <motion.p
-                key={line}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: index * 0.08, ease: premiumEase }}
-                className="border-t border-border/50 py-5 font-display text-3xl leading-tight text-foreground md:text-5xl"
-              >
-                {line}
-              </motion.p>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
 function CultureNotes() {
   const notes = [
     "Luxury fashion no longer starts on runways. It starts with creators.",
@@ -264,13 +212,22 @@ function CultureNotes() {
 }
 
 function Trending() {
-  const tags = ["#avantgarde", "#tailoring", "#metallic", "#noir", "#oversized", "#brutalist", "#couture", "#streetwear", "#archive"];
+  const tags = [
+    "#avantgarde",
+    "#tailoring",
+    "#metallic",
+    "#noir",
+    "#oversized",
+    "#brutalist",
+    "#couture",
+    "#streetwear",
+    "#archive",
+  ];
   return (
     <div className="pb-20">
       <TrendingHero />
       <TrendMovements />
       <TrendStats />
-      <TrendInsight />
 
       <section className="container-luxe py-20 md:py-24">
         <motion.div
@@ -317,7 +274,11 @@ function Trending() {
               )}
               {i < 5 && (
                 <span className="absolute top-3 right-3 z-10 rounded-full border border-accent/30 bg-onyx/55 px-3 py-1 text-[9px] uppercase tracking-[0.18em] text-accent backdrop-blur-xl">
-                  {["Hot Now", "Rising Fast", "Creator Pick", "Most Saved", "Limited Drop Trend"][i]}
+                  {
+                    ["Hot Now", "Rising Fast", "Creator Pick", "Most Saved", "Limited Drop Trend"][
+                      i
+                    ]
+                  }
                 </span>
               )}
               <ProductCard product={p} index={i} />
@@ -330,7 +291,10 @@ function Trending() {
         <section className="glass-strong rounded-sm p-10 text-center">
           <Flame className="w-8 h-8 text-accent mx-auto" />
           <h2 className="display-lg mt-4">Hot drop in 03:14:22</h2>
-          <p className="mt-3 text-muted-foreground max-w-md mx-auto">Aria Volkov's "After Hours" capsule releases at midnight CET. Members get 12-hour early access.</p>
+          <p className="mt-3 text-muted-foreground max-w-md mx-auto">
+            Aria Volkov's "After Hours" capsule releases at midnight CET. Members get 12-hour early
+            access.
+          </p>
         </section>
       </div>
 

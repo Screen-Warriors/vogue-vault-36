@@ -184,58 +184,6 @@ function FeaturedLabelsPreview() {
   );
 }
 
-function DesignerManifesto() {
-  const lines = [
-    "Fashion belongs to creators.",
-    "Independent labels deserve discovery.",
-    "We build India's next generation luxury designer ecosystem.",
-    "The future of Indian luxury belongs to independent designers.",
-  ];
-
-  return (
-    <section className="container-luxe py-20 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.85, ease: premiumEase }}
-        className="relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-8 shadow-[0_24px_100px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-14"
-      >
-        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
-        <motion.div
-          aria-hidden="true"
-          className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
-          animate={{ x: [0, -18, 0], opacity: [0.1, 0.18, 0.1] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-4">
-            <p className="eyebrow text-accent">Designer Manifesto</p>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              #Label is not fashion ecommerce. It is India's independent designer discovery
-              platform for craft-led labels, limited drops, and premium creator culture.
-            </p>
-          </div>
-          <div className="lg:col-span-8">
-            {lines.map((line, index) => (
-              <motion.p
-                key={line}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: index * 0.08, ease: premiumEase }}
-                className="border-t border-border/50 py-5 font-display text-3xl leading-tight text-foreground md:text-5xl"
-              >
-                {line}
-              </motion.p>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
 function EcosystemStats() {
   const stats = [
     { value: "320+", label: "Independent Designers" },
@@ -283,7 +231,6 @@ function DesignersPage() {
       <DesignersHero />
       <TrustStrip />
       <FeaturedLabelsPreview />
-      <DesignerManifesto />
       <EcosystemStats />
       <div className="container-luxe">
         <motion.div

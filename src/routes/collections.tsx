@@ -139,7 +139,9 @@ function FeaturedDiscovery() {
         transition={{ duration: 0.75, ease: premiumEase }}
       >
         <p className="eyebrow text-accent mb-4">Featured Collections</p>
-        <h2 className="display-lg max-w-3xl">Curated movements from India's new luxury creators.</h2>
+        <h2 className="display-lg max-w-3xl">
+          Curated movements from India's new luxury creators.
+        </h2>
       </motion.div>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -222,58 +224,6 @@ function EcosystemStats() {
   );
 }
 
-function CollectionManifesto() {
-  const lines = [
-    "Fashion moves faster than tradition.",
-    "Creators define trends.",
-    "Collections are moments.",
-    "Luxury belongs to independent voices.",
-  ];
-
-  return (
-    <section className="container-luxe py-20 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 28, filter: "blur(8px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.85, ease: premiumEase }}
-        className="relative overflow-hidden rounded-sm border border-border/60 bg-background/25 p-8 shadow-[0_24px_100px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-14"
-      >
-        <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
-        <motion.div
-          aria-hidden="true"
-          className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-accent/8 blur-[110px]"
-          animate={{ x: [0, -18, 0], opacity: [0.1, 0.18, 0.1] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div className="relative grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-4">
-            <p className="eyebrow text-accent">Collection Manifesto</p>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              #Label treats collections as cultural luxury movements: limited drops shaped by
-              independent labels, Indian craft, and creator-led discovery.
-            </p>
-          </div>
-          <div className="lg:col-span-8">
-            {lines.map((line, index) => (
-              <motion.p
-                key={line}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: index * 0.08, ease: premiumEase }}
-                className="border-t border-border/50 py-5 font-display text-3xl leading-tight text-foreground md:text-5xl"
-              >
-                {line}
-              </motion.p>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
 function CuratorNotes() {
   const notes = [
     "Streetwear India explores elevated urban silhouettes inspired by India's emerging luxury street culture.",
@@ -319,7 +269,6 @@ function CollectionsPage() {
       <TrustStrip />
       <FeaturedDiscovery />
       <EcosystemStats />
-      <CollectionManifesto />
       <div className="container-luxe py-20 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -346,13 +295,19 @@ function CollectionsPage() {
                 className="group relative block overflow-hidden rounded-sm border border-transparent aspect-[16/9] md:aspect-[21/9] transition-all duration-500 hover:border-accent/40 hover:shadow-[0_28px_100px_rgba(0,0,0,0.34),0_0_42px_hsl(var(--accent)/0.1)]"
               >
                 <div className="absolute inset-x-8 top-0 z-10 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <img src={collection.image} alt={collection.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-[1.03]" />
+                <img
+                  src={collection.image}
+                  alt={collection.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-[1.03]"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-onyx via-onyx/40 to-transparent" />
                 <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-14">
                   <div className="flex items-end justify-between gap-6 flex-wrap">
                     <div>
                       <p className="eyebrow text-accent">
-                        {collection.season} / {collection.pieces} apparel pieces / {collection.designerName}
+                        {collection.season} / {collection.pieces} apparel pieces /{" "}
+                        {collection.designerName}
                       </p>
                       <h3 className="display-xl mt-3">{collection.name}</h3>
                     </div>
